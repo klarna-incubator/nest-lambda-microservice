@@ -3,38 +3,39 @@ import { v4 } from 'uuid'
 import { expect, jest, beforeEach, afterEach, describe, it } from '@jest/globals'
 import { MockedFunction } from 'jest-mock'
 
-import { broker, mockServerResponse } from '../../server/mocks'
+import { LambdaMicroserviceBrokerFactory, mockServerResponse } from '../../server/mocks'
 import { LambdaMicroserviceClient } from '../lambda-microservice.client'
+import { LambdaMicroserviceBroker } from '../../server'
 
 jest.mock('uuid')
-jest.mock('../../server/lambda-microservice.broker')
 
 describe('LambdaMicroserviceClient', () => {
+  const requestId = '21edf5bc-8f37-457f-bcdb-207d9156c42f'
   const contextFactory = () => ({} as Context)
   const uuidV4 = v4 as MockedFunction<() => string>
+  let broker: LambdaMicroserviceBroker
+  let event: any
+  let context: Context
+  let client: LambdaMicroserviceClient
+
+  beforeEach(() => {
+    context = contextFactory()
+    broker = LambdaMicroserviceBrokerFactory()
+
+    client = new LambdaMicroserviceClient({ broker })
+
+    uuidV4.mockReturnValueOnce(requestId)
+  })
 
   afterEach(() => {
+    client.close()
+    broker.close()
     jest.clearAllMocks()
   })
 
-  describe('when processing custom payload events', () => {
-    let event: unknown
-    let context: Context
-    let client: LambdaMicroserviceClient
-
-    const requestId = 'request-id-uuid-v4'
-
+  describe('custom', () => {
     beforeEach(() => {
       event = { foo: 'bar' }
-      context = contextFactory()
-
-      client = new LambdaMicroserviceClient({ broker })
-
-      uuidV4.mockReturnValueOnce(requestId)
-    })
-
-    afterEach(() => {
-      client.close()
     })
 
     it('should send the request to the server', async () => {
@@ -46,7 +47,7 @@ describe('LambdaMicroserviceClient', () => {
         context,
         data: event,
         id: requestId,
-        pattern: '/',
+        pattern: '*',
       })
     })
 
@@ -59,16 +60,14 @@ describe('LambdaMicroserviceClient', () => {
     })
 
     it('should fail on server error', async () => {
-      mockServerResponse(requestId, new Error('Failed'))
+      const serverError = new Error('Failed')
+      mockServerResponse(requestId, serverError)
 
-      await expect(() => client.processEvent(event, context)).rejects.toEqual(new Error('Failed'))
+      await expect(() => client.processEvent(event, context)).rejects.toEqual(serverError)
     })
   })
 
-  describe('when processing SQS events', () => {
-    let event: any
-    let context: Context
-    let client: LambdaMicroserviceClient
+  describe('SQS', () => {
     const sqsMessageIdFactory = (sequence: number) => `sqs-message-${sequence}`
     const sqsEventFactory = (recordsCount: number) => ({
       Records: new Array(recordsCount)
@@ -85,7 +84,8 @@ describe('LambdaMicroserviceClient', () => {
           messageAttributes: {
             BazAttr: { dataType: 'String', stringValue: 'BazAttrVal' },
             FooAttr: { dataType: 'String', stringValue: 'FooAttrVal' },
-            BarAttr: { dataType: 'Number', stringValue: '42' },
+            BarAttr: { dataType: 'String', stringValue: 'false' },
+            QuxAttr: { dataType: 'Number', stringValue: '42' },
           },
           md5OfBody: '9e4be8d49e443577d8d883e203e3b64a',
           eventSource: 'aws:sqs',
@@ -97,16 +97,10 @@ describe('LambdaMicroserviceClient', () => {
 
     beforeEach(() => {
       event = sqsEventFactory(10)
-      context = contextFactory()
-
-      client = new LambdaMicroserviceClient({ broker })
-    })
-
-    afterEach(() => {
-      client.close()
     })
 
     it('should send a request per SQS record to the server', async () => {
+      const sendRequestSpy = jest.spyOn(broker, 'sendRequest')
       const recordsCount = 10
       event = sqsEventFactory(recordsCount)
 
@@ -116,10 +110,10 @@ describe('LambdaMicroserviceClient', () => {
 
       await client.processEvent(event, context)
 
-      expect(broker.sendRequest).toHaveBeenCalledTimes(recordsCount)
+      expect(sendRequestSpy).toHaveBeenCalledTimes(recordsCount)
 
-      for (let i = 0; i < broker.sendRequest.mock.calls.length; i++) {
-        const [callArg0] = broker.sendRequest.mock.calls[i]
+      for (let i = 0; i < sendRequestSpy.mock.calls.length; i++) {
+        const [callArg0] = sendRequestSpy.mock.calls[i]
         expect(callArg0).toEqual({
           context,
           data: event.Records[i],
@@ -127,7 +121,8 @@ describe('LambdaMicroserviceClient', () => {
           pattern: {
             BazAttr: 'BazAttrVal',
             FooAttr: 'FooAttrVal',
-            BarAttr: 42,
+            BarAttr: false,
+            QuxAttr: 42,
           },
         })
       }

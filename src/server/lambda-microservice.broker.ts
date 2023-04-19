@@ -9,29 +9,14 @@ export const RequestEvent = Symbol('Request')
 export const ResponseEvent = Symbol('Response')
 export type SupportedEvent = typeof RequestEvent | typeof ResponseEvent
 
-// TODO Look into replacing the bare node EventEmitter with @nestjs/event-emitter
 export class LambdaMicroserviceBroker extends EventEmitter {
-  protected isListening = false
-
-  /**
-   * Controlled by the Lambda Microservice Server
-   * @param callbackFn
-   */
   public listen(callbackFn?: (...args: unknown[]) => void) {
-    this.isListening = true
-
     callbackFn && callbackFn()
   }
 
-  /**
-   * Controlled by the Lambda Microservice Server
-   * @param callbackFn
-   */
   public close(callbackFn?: (...args: unknown[]) => void) {
-    super.removeAllListeners(ResponseEvent)
-    super.removeAllListeners(RequestEvent)
-
-    this.isListening = false
+    this.removeAllListeners(ResponseEvent)
+    this.removeAllListeners(RequestEvent)
 
     callbackFn && callbackFn()
   }
@@ -46,15 +31,15 @@ export class LambdaMicroserviceBroker extends EventEmitter {
         if (outgoingResponse.isDisposed) {
           responseStream$.complete()
 
-          super.off(ResponseEvent, responseEventListener)
+          this.off(ResponseEvent, responseEventListener)
         }
       }
     }
 
-    if (this.isListening) {
-      super.on(ResponseEvent, responseEventListener)
+    if (this.listeners(RequestEvent).length) {
+      this.on(ResponseEvent, responseEventListener)
 
-      super.emit(RequestEvent, outgoingRequest)
+      this.emit(RequestEvent, outgoingRequest)
     } else {
       responseStream$.error(new NoConsumerError())
     }
@@ -63,4 +48,4 @@ export class LambdaMicroserviceBroker extends EventEmitter {
   }
 }
 
-export const broker = new LambdaMicroserviceBroker()
+export const LambdaMicroserviceBrokerFactory = () => new LambdaMicroserviceBroker()

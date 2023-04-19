@@ -5,16 +5,16 @@ import { catchError, map, merge, of, reduce } from 'rxjs'
 import { v4 } from 'uuid'
 
 import { IncomingResponseError } from '../errors'
-import { LambdaEventSourceMapper } from '../external'
-import type { IncomingResponse, LambdaMicroserviceOptions, OutgoingRequest, ResponseTuple } from '../interfaces'
+import { EventMapper } from '../lambda'
 import { LambdaMicroserviceBroker } from '../server'
+import type { IncomingResponse, LambdaMicroserviceOptions, OutgoingRequest, ResponseTuple } from '../interfaces'
 
 export const ClientToken = Symbol('LambdaMicroserviceClient')
 
 export class LambdaMicroserviceClient extends ClientProxy {
   protected broker: LambdaMicroserviceBroker
 
-  protected lambdaEventSourceMapper = new LambdaEventSourceMapper()
+  protected eventMapper = new EventMapper()
 
   protected requestMap = new WeakMap<OutgoingRequest['data'], OutgoingRequest>()
 
@@ -42,7 +42,7 @@ export class LambdaMicroserviceClient extends ClientProxy {
   }
 
   public async processEvent(event: unknown, context: Context) {
-    const request = this.lambdaEventSourceMapper.mapEventToRequest(event, context)
+    const request = this.eventMapper.mapEventToRequest(event, context)
     const requests = Array.isArray(request) ? request : [request]
 
     return new Promise((resolve, reject) => {
@@ -71,7 +71,7 @@ export class LambdaMicroserviceClient extends ClientProxy {
         )
         .subscribe((responseTuplesList) => {
           try {
-            resolve(this.lambdaEventSourceMapper.mapToLambdaResponse(event, responseTuplesList))
+            resolve(this.eventMapper.mapToLambdaResponse(event, responseTuplesList))
           } catch (error: unknown) {
             reject(error)
           }
@@ -130,17 +130,10 @@ export class LambdaMicroserviceClient extends ClientProxy {
       }
 
       if (isDisposed || err) {
-        return callbackFn({
-          err,
-          response,
-          isDisposed: true,
-        })
+        return callbackFn({ err, response, isDisposed: true })
       }
 
-      callbackFn({
-        err,
-        response,
-      })
+      callbackFn({ err, response })
     }
   }
 }

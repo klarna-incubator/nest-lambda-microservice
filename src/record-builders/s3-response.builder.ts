@@ -1,7 +1,7 @@
 import { IncomingResponseError } from '../errors'
 import { ResponseBuilder, ResponseTuple } from '../interfaces'
 
-export class EventBridgeResponseBuilder implements ResponseBuilder {
+export class S3ResponseBuilder implements ResponseBuilder {
   constructor(protected readonly responseTuples: ResponseTuple[]) {}
 
   public build() {
@@ -11,12 +11,6 @@ export class EventBridgeResponseBuilder implements ResponseBuilder {
       }
     }
 
-    if (this.responseTuples.length > 1) {
-      return this.responseTuples.map((tuple) => tuple[1])
-    }
-
-    const tuple = this.responseTuples[0]
-
-    return tuple[1]
+    return this.responseTuples.map(([_request, response]) => response)
   }
 }

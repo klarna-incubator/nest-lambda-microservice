@@ -1,18 +1,26 @@
 import { Context } from 'aws-lambda'
 
-import { EventBridgeCronEvent } from '../external'
+import { AnyEventBridgeEvent, JSONValue } from '../lambda'
 import { OutgoingEventBridgeRequest, RequestBuilder } from '../interfaces'
 
-export type EventBridgePattern = unknown
+export interface EventBridgePattern {
+  source: string
+  detailType: string
+  detail: JSONValue
+}
 
 export class EventBridgeRequestBuilder implements RequestBuilder {
-  public static buildPattern(data: EventBridgeCronEvent): EventBridgePattern {
-    return data['detail']
+  public static buildPattern(data: AnyEventBridgeEvent): EventBridgePattern {
+    return {
+      source: data.source,
+      detailType: data['detail-type'],
+      detail: data.detail,
+    }
   }
 
-  protected pattern: EventBridgePattern = {}
+  protected pattern: EventBridgePattern
 
-  constructor(protected readonly data: EventBridgeCronEvent, protected readonly context: Context) {
+  constructor(protected readonly data: AnyEventBridgeEvent, protected readonly context: Context) {
     this.pattern = EventBridgeRequestBuilder.buildPattern(this.data)
   }
 

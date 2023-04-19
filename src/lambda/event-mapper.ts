@@ -3,45 +3,35 @@ import { Context } from 'aws-lambda'
 
 import { OutgoingRequest, ResponseTuple } from '../interfaces'
 import {
+  ApiGatewayRequestBuilder,
+  ApiGatewayResponseBuilder,
   CustomRequestBuilder,
   CustomResponseBuilder,
   EventBridgeRequestBuilder,
   EventBridgeResponseBuilder,
+  S3RequestBuilder,
+  S3ResponseBuilder,
   SnsRequestBuilder,
   SnsResponseBuilder,
   SqsRequestBuilder,
   SqsResponseBuilder,
 } from '../record-builders'
-import {
-  isApiGatewayEvent,
-  isDynamoDbEvent,
-  isKinesisEvent,
-  isS3Event,
-  isScheduledEventBridgeEvent,
-  isSnsEvent,
-  isSqsEvent,
-} from './triggers'
+import { isApiGatewayEvent, isS3Event, isEventBridgeEvent, isSnsEvent, isSqsEvent } from './integrations'
 
-export class LambdaEventSourceMapper {
+export class EventMapper {
   public mapEventToRequest(event: unknown, context: Context): OutgoingRequest | OutgoingRequest[] {
     if (isApiGatewayEvent(event)) {
-      this.throwNotImplementedError('Api Gateway')
+      return new ApiGatewayRequestBuilder(event, context).build()
     }
 
-    if (isDynamoDbEvent(event)) {
-      this.throwNotImplementedError('Dynamo Db')
-    }
-
-    if (isScheduledEventBridgeEvent(event)) {
+    if (isEventBridgeEvent(event)) {
       return new EventBridgeRequestBuilder(event, context).build()
     }
 
-    if (isKinesisEvent(event)) {
-      this.throwNotImplementedError('Kinesis')
-    }
-
     if (isS3Event(event)) {
-      this.throwNotImplementedError('S3')
+      return event.Records.map((record) => {
+        return new S3RequestBuilder(record, context).build()
+      })
     }
 
     if (isSnsEvent(event)) {
@@ -61,23 +51,15 @@ export class LambdaEventSourceMapper {
 
   public mapToLambdaResponse(event: unknown, responseTuples: ResponseTuple[]) {
     if (isApiGatewayEvent(event)) {
-      this.throwNotImplementedError('Api Gateway')
+      return new ApiGatewayResponseBuilder(responseTuples).build()
     }
 
-    if (isDynamoDbEvent(event)) {
-      this.throwNotImplementedError('Dynamo Db')
-    }
-
-    if (isScheduledEventBridgeEvent(event)) {
+    if (isEventBridgeEvent(event)) {
       return new EventBridgeResponseBuilder(responseTuples).build()
     }
 
-    if (isKinesisEvent(event)) {
-      this.throwNotImplementedError('Kinesis')
-    }
-
     if (isS3Event(event)) {
-      this.throwNotImplementedError('S3')
+      return new S3ResponseBuilder(responseTuples).build()
     }
 
     if (isSnsEvent(event)) {
@@ -88,7 +70,6 @@ export class LambdaEventSourceMapper {
       return new SqsResponseBuilder(responseTuples).build()
     }
 
-    // return responseTuples.length === 1 ? responseTuples[0] : responseTuples
     return new CustomResponseBuilder(responseTuples).build()
   }
 

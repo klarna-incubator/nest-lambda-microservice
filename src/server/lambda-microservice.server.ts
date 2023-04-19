@@ -18,7 +18,11 @@ export const CatchAllPattern = '*'
 
 export const PartialMatchExtraProp = 'partialMatch'
 
+export const AwsLambdaTransportId = Symbol('AWS_LAMBDA') // Use it when registering the client
+
 export class LambdaMicroserviceServer extends Server implements CustomTransportStrategy {
+  public readonly transportId = AwsLambdaTransportId
+
   protected readonly broker: LambdaMicroserviceBroker
 
   protected readonly handlerPatternsMap = new Map()
@@ -174,11 +178,17 @@ export class LambdaMicroserviceServer extends Server implements CustomTransportS
     }
 
     if (isObject(messagePatternPart) && isObject(handlerPatternPart)) {
-      const keys = isPartialObjectMatchAllowed ? Object.keys(handlerPatternPart) : Object.keys(messagePatternPart)
+      const handlerPatternKeys = Object.keys(handlerPatternPart)
+      const messagePatternKeys = Object.keys(messagePatternPart)
+      const keys = isPartialObjectMatchAllowed ? handlerPatternKeys : messagePatternKeys
+      const hasSameShape = isPartialObjectMatchAllowed || handlerPatternKeys.length === messagePatternKeys.length
 
-      return keys.every((key) => {
-        return this.performPatternMatch(handlerPatternPart[key], messagePatternPart[key], isPartialObjectMatchAllowed)
-      })
+      return (
+        hasSameShape &&
+        keys.every((key) => {
+          return this.performPatternMatch(handlerPatternPart[key], messagePatternPart[key], isPartialObjectMatchAllowed)
+        })
+      )
     }
 
     return false

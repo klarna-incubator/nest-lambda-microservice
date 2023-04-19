@@ -3,10 +3,10 @@ import { v4 } from 'uuid'
 
 import { OutgoingCustomRequest, RequestBuilder } from '../interfaces'
 
-export type CustomRecordPattern = '/'
+export type CustomRecordPattern = '*'
 
 export class CustomRequestBuilder implements RequestBuilder {
-  protected pattern: CustomRecordPattern = '/'
+  protected pattern: CustomRecordPattern = '*'
 
   constructor(protected readonly data: unknown, protected readonly context: Context) {}
 

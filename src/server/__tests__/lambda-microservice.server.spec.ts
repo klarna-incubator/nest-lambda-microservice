@@ -3,14 +3,15 @@ import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals
 import { MessageHandler } from '@nestjs/microservices'
 
 import { LambdaMicroserviceServer } from '../lambda-microservice.server'
-import { broker } from '../mocks'
+import { LambdaMicroserviceBrokerFactory } from '../mocks'
+
 jest.mock('../../server/lambda-microservice.broker')
 
 describe('LambdaMicroserviceServer', () => {
   let server: LambdaMicroserviceServer
 
   beforeEach(async () => {
-    server = new LambdaMicroserviceServer({ broker })
+    server = new LambdaMicroserviceServer({ broker: LambdaMicroserviceBrokerFactory() })
 
     await server.listen(jest.fn())
   })

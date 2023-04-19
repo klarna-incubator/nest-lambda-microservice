@@ -1,7 +1,7 @@
 import { Context, SQSRecord } from 'aws-lambda'
 import { SQSMessageAttribute } from 'aws-lambda/trigger/sqs'
 
-import { tryUnwrapSnsMessageFromSqsRecord } from '../external'
+import { tryUnwrapSnsMessageFromSqsRecord } from '../lambda'
 import { OutgoingSqsRequest, RequestBuilder } from '../interfaces'
 import { SnsRequestBuilder } from './sns-request.builder'
 
@@ -39,8 +39,6 @@ export class SqsRequestBuilder implements RequestBuilder {
         } catch (_error: any) {
           return messageAttribute.stringValue ?? ''
         }
-      case 'String.Array':
-        return messageAttribute.stringValue ? JSON.parse(messageAttribute.stringValue) : []
       case 'Number':
         return messageAttribute.stringValue ? JSON.parse(messageAttribute.stringValue) : 0
       case 'Binary':

@@ -28,12 +28,13 @@ export const mockServerResponse = (requestId: string, response: unknown) => {
   })
 }
 
-export const broker = mocked<Partial<LambdaMicroserviceBroker>>({
-  listen,
-  close,
-  sendRequest,
-  on,
-  off,
-  once,
-  emit,
-}) as MockedObject<LambdaMicroserviceBroker>
+export const LambdaMicroserviceBrokerFactory = () =>
+  mocked<Partial<LambdaMicroserviceBroker>>({
+    listen,
+    close,
+    sendRequest,
+    on,
+    off,
+    once,
+    emit,
+  }) as MockedObject<LambdaMicroserviceBroker>

@@ -1,9 +1,16 @@
 import { ReadPacket, WritePacket } from '@nestjs/microservices'
-import { PacketId } from '@nestjs/microservices/interfaces/packet.interface'
-import { Context, SNSMessage, SQSRecord } from 'aws-lambda'
+import { PacketId } from '@nestjs/microservices'
+import {
+  Context,
+  SNSMessage,
+  SQSRecord,
+  S3EventRecord,
+  EventBridgeEvent,
+  APIGatewayEvent,
+  APIGatewayProxyEventV2,
+} from 'aws-lambda'
 
 import { IncomingResponseError } from '../errors'
-import { EventBridgeCronEvent } from '../external'
 
 export interface ContextAware {
   context: Context
@@ -27,8 +34,23 @@ export type IncomingSnsRequest = ReadPacket<SNSMessage> & PacketId & ContextAwar
 export type OutgoingSnsResponse = WritePacket<void> & PacketId
 export type IncomingSnsResponse = WritePacket<void> & PacketId
 
+/* S3 */
+export type OutgoingS3Request = ReadPacket<S3EventRecord> & PacketId & ContextAware
+export type IncomingS3Request = ReadPacket<S3EventRecord> & PacketId & ContextAware
+export type OutgoingS3Response = WritePacket<void> & PacketId
+export type IncomingS3Response = WritePacket<void> & PacketId
+
 /* EventBridge */
-export type OutgoingEventBridgeRequest = ReadPacket<EventBridgeCronEvent> & PacketId & ContextAware
+export type OutgoingEventBridgeRequest = ReadPacket<EventBridgeEvent<string, unknown>> & PacketId & ContextAware
+export type IncomingEventBridgeRequest = ReadPacket<EventBridgeEvent<string, unknown>> & PacketId & ContextAware
+export type OutgoingEventBridgeResponse = WritePacket<void> & PacketId
+export type IncomingEventBridgeResponse = WritePacket<void> & PacketId
+
+/* ApiGateway */
+export type OutgoingApiGatewayRequest = ReadPacket<APIGatewayEvent | APIGatewayProxyEventV2> & PacketId & ContextAware
+export type IncomingApiGatewayRequest = ReadPacket<APIGatewayEvent | APIGatewayProxyEventV2> & PacketId & ContextAware
+export type OutgoingApiGatewayResponse = WritePacket<void> & PacketId
+export type IncomingApiGatewayResponse = WritePacket<void> & PacketId
 
 export type OutgoingRequest = OutgoingCustomRequest | OutgoingSqsRequest | OutgoingSnsRequest
 export type IncomingRequest = IncomingCustomRequest | IncomingSqsRequest | IncomingSnsRequest

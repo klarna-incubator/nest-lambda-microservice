@@ -11,7 +11,6 @@ export class SnsResponseBuilder implements ResponseBuilder {
       }
     }
 
-    // SNS does not expect any response
-    return undefined
+    return this.responseTuples.map(([_request, response]) => response)
   }
 }

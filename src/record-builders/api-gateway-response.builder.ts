@@ -1,7 +1,7 @@
 import { IncomingResponseError } from '../errors'
 import { ResponseBuilder, ResponseTuple } from '../interfaces'
 
-export class EventBridgeResponseBuilder implements ResponseBuilder {
+export class ApiGatewayResponseBuilder implements ResponseBuilder {
   constructor(protected readonly responseTuples: ResponseTuple[]) {}
 
   public build() {

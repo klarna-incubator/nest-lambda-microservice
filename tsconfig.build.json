@@ -1,8 +1,8 @@
 {
-  "extends": ["@tsconfig/node18/tsconfig.json", "./tsconfig.build.json"],
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "rootDir": ".",
+    "baseUrl": "src",
+    "rootDir": "src",
     "outDir": "dist",
     "incremental": false,
     "noImplicitAny": true,
@@ -12,5 +12,5 @@
     "esModuleInterop": true
   },
   "include": ["src/**/*", "test/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "**/*.spec.ts", "test/fixtures/**/*"]
 }
