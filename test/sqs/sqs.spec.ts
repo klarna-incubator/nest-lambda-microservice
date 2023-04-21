@@ -5,6 +5,7 @@ import { ClientsModule, MessagePattern, Payload } from '@nestjs/microservices'
 import { ClientToken, LambdaMicroserviceBrokerFactory, LambdaMicroserviceClient, SqsResponseBuilder } from '../../src'
 import { makeLambdaHandler } from '../handler'
 import { lambdaContextFactory } from '../context'
+
 import { makeSqsEvent } from './events'
 
 describe('SQS > Lambda', () => {

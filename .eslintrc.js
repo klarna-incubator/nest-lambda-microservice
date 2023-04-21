@@ -13,11 +13,12 @@ module.exports = {
   plugins: ['@typescript-eslint', 'import'],
   ignorePatterns: ['dist/**/*'],
   rules: {
+    'import/no-duplicates': ['error', { considerQueryString: true }],
     'import/export': 0,
     'import/order': [
       'error',
       {
-        groups: ['builtin', 'external', 'internal'],
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
         'newlines-between': 'always',
       },
     ],

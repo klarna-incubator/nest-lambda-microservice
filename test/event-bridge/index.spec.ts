@@ -11,6 +11,7 @@ import {
 } from '../../src'
 import { makeLambdaHandler } from '../handler'
 import { lambdaContextFactory } from '../context'
+
 import { makeEventBridgeEvent } from './events'
 
 describe('Event Bridge > Lambda', () => {

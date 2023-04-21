@@ -6,6 +6,7 @@ import { S3EventRecord } from 'aws-lambda/trigger/s3'
 import { ClientToken, LambdaMicroserviceBrokerFactory, LambdaMicroserviceClient, S3RecordPattern } from '../../src'
 import { makeLambdaHandler } from '../handler'
 import { lambdaContextFactory } from '../context'
+
 import { makeS3Event } from './events'
 
 describe('S3 > Lambda', () => {

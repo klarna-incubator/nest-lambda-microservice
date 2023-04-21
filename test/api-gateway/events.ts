@@ -1,8 +1,6 @@
-import { APIGatewayEvent, APIGatewayProxyEventV2, APIGatewayProxyEventQueryStringParameters } from 'aws-lambda'
+import { APIGatewayEvent, APIGatewayProxyEventV2 } from 'aws-lambda'
 
-export const makeApiGatewayEventV1 = (
-  queryStringParameters?: APIGatewayProxyEventQueryStringParameters,
-): APIGatewayEvent => ({
+export const makeApiGatewayEventV1 = (props: Partial<APIGatewayEvent> = {}): APIGatewayEvent => ({
   resource: '/v1/my-resources/{myResourceId}',
   path: '/v1/my-resources/8fe4ac38-4ec6-4e63-b173-0fed5d4aa6ff',
   httpMethod: 'GET',
@@ -44,7 +42,7 @@ export const makeApiGatewayEventV1 = (
     'X-Forwarded-Port': ['443'],
     'X-Forwarded-Proto': ['https'],
   },
-  queryStringParameters: queryStringParameters ?? { city: 'paris', year: '2022' },
+  queryStringParameters: { city: 'paris', year: '2022' },
   multiValueQueryStringParameters: { city: ['paris'], year: ['2022'] },
   pathParameters: { myResourceId: '8fe4ac38-4ec6-4e63-b173-0fed5d4aa6ff' },
   stageVariables: null,
@@ -81,15 +79,14 @@ export const makeApiGatewayEventV1 = (
   } as any,
   body: null,
   isBase64Encoded: false,
+  ...props,
 })
-export const makeApiGatewayEventV2 = (
-  queryStringParameters?: APIGatewayProxyEventQueryStringParameters,
-): APIGatewayProxyEventV2 => ({
+export const makeApiGatewayEventV2 = (props: Partial<APIGatewayProxyEventV2> = {}): APIGatewayProxyEventV2 => ({
   version: '2.0',
   routeKey: 'GET /v1/my-resources/{myResourceId}',
   rawPath: '/v1/my-resources/8fe4ac38-4ec6-4e63-b173-0fed5d4aa6ff',
   rawQueryString: 'city=paris&year=2022',
-  queryStringParameters: queryStringParameters ?? {
+  queryStringParameters: {
     city: 'paris',
     year: '2022',
   },
@@ -136,4 +133,5 @@ export const makeApiGatewayEventV2 = (
     timeEpoch: 1583817383220,
   },
   isBase64Encoded: true,
+  ...props,
 })

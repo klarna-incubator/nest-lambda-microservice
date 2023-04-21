@@ -1,7 +1,14 @@
 import { jest, describe, afterEach, it, expect } from '@jest/globals'
-import { Controller, Module } from '@nestjs/common'
-import { ClientsModule, MessagePattern, Payload } from '@nestjs/microservices'
-
+import {
+  ValidationError,
+  ValidationPipe,
+  Module,
+  PipeTransform,
+  ArgumentMetadata,
+  Controller,
+  Injectable,
+} from '@nestjs/common'
+import { ClientsModule, MessagePattern, Payload, RpcException } from '@nestjs/microservices'
 import {
   ClientToken,
   LambdaMicroserviceBrokerFactory,
@@ -9,9 +16,12 @@ import {
   AnyAPIGatewayEvent,
   ApiGatewayPattern,
   isApiGatewayEventV1,
-} from '../../src'
+} from '@klarna/nest-lambda-microservice'
+import { APP_PIPE } from '@nestjs/core'
+
 import { makeLambdaHandler } from '../handler'
 import { lambdaContextFactory } from '../context'
+
 import { makeApiGatewayEventV1, makeApiGatewayEventV2 } from './events'
 
 describe('API Gateway > Lambda', () => {
@@ -126,8 +136,16 @@ describe('API Gateway > Lambda', () => {
     })
 
     it.each([
-      ['v1', makeApiGatewayEventV1({ year: '2022', city: 'paris' }), { statusCode: 200, body: 'handlerMethod' }],
-      ['v2', makeApiGatewayEventV2({ year: '2022', city: 'paris' }), { statusCode: 200, body: 'handlerMethod' }],
+      [
+        'v1',
+        makeApiGatewayEventV1({ queryStringParameters: { year: '2022', city: 'paris' } }),
+        { statusCode: 200, body: 'handlerMethod' },
+      ],
+      [
+        'v2',
+        makeApiGatewayEventV2({ queryStringParameters: { year: '2022', city: 'paris' } }),
+        { statusCode: 200, body: 'handlerMethod' },
+      ],
     ])(
       'should qualify the handler that fully matches the message attributes with unsorted request parameters %s',
       async (_version, event, expectedResponse) => {
@@ -140,8 +158,8 @@ describe('API Gateway > Lambda', () => {
     )
 
     it.each([
-      ['v1', makeApiGatewayEventV1({ city: 'paris', year: '2022', month: '01' })],
-      ['v2', makeApiGatewayEventV2({ city: 'paris', year: '2022', month: '01' })],
+      ['v1', makeApiGatewayEventV1({ queryStringParameters: { city: 'paris', year: '2022', month: '01' } })],
+      ['v2', makeApiGatewayEventV2({ queryStringParameters: { city: 'paris', year: '2022', month: '01' } })],
     ])('should throw when the message has extra attributes %s', async (_version, event) => {
       const handler = makeLambdaHandler(TestAppModule, broker)
 
@@ -151,8 +169,8 @@ describe('API Gateway > Lambda', () => {
     })
 
     it.each([
-      ['v1', makeApiGatewayEventV1({ city: 'paris' })],
-      ['v2', makeApiGatewayEventV2({ city: 'paris' })],
+      ['v1', makeApiGatewayEventV1({ queryStringParameters: { city: 'paris' } })],
+      ['v2', makeApiGatewayEventV2({ queryStringParameters: { city: 'paris' } })],
     ])('should throw when the pattern has extra attributes not found on the message %s', async (_version, event) => {
       const handler = makeLambdaHandler(TestAppModule, broker)
 
@@ -162,8 +180,8 @@ describe('API Gateway > Lambda', () => {
     })
 
     it.each([
-      ['v1', makeApiGatewayEventV1({ city: 'berlin', year: '2022' })],
-      ['v2', makeApiGatewayEventV2({ city: 'berlin', year: '2022' })],
+      ['v1', makeApiGatewayEventV1({ queryStringParameters: { city: 'berlin', year: '2022' } })],
+      ['v2', makeApiGatewayEventV2({ queryStringParameters: { city: 'berlin', year: '2022' } })],
     ])('should throw when message and pattern values do not match %s', async (_version, event) => {
       const handler = makeLambdaHandler(TestAppModule, broker)
 
@@ -221,6 +239,102 @@ describe('API Gateway > Lambda', () => {
       await expect(handler(event, lambdaContextFactory())).rejects.toEqual(
         new Error('No handler qualified to process the message'),
       )
+    })
+  })
+
+  describe('with validation / transform pips', () => {
+    const broker = LambdaMicroserviceBrokerFactory()
+
+    const ValidationPipeFactory = (): ValidationPipe => {
+      return new ValidationPipe({
+        transform: true,
+        exceptionFactory: (errors: ValidationError[]): never => {
+          throw new RpcException(
+            `The request failed validation due to errors in ${errors.map(({ property }) => property).join(', ')}`,
+          )
+        },
+      })
+    }
+
+    @Injectable()
+    class TransformPipe implements PipeTransform {
+      public transform(value: any, metadata: ArgumentMetadata) {
+        const { metatype, type } = metadata
+        const parsedValue = this.tryParseJson<any>(value)
+
+        if (!metatype?.constructor?.name) {
+          return parsedValue
+        }
+
+        return parsedValue
+      }
+
+      protected tryParseJson<T>(value: string): T | string {
+        try {
+          return JSON.parse(value)
+        } catch (_error: unknown) {
+          return value
+        }
+      }
+    }
+
+    @Controller()
+    class TestController {
+      @MessagePattern<Partial<ApiGatewayPattern>>(
+        {
+          httpMethod: 'POST',
+          resource: '/v1/my-resources',
+        },
+        { partialMatch: true },
+      )
+      public handlerMethod(@Payload('body') requestBody: any) {
+        return {
+          statusCode: 200,
+          body: 'handlerMethod',
+        }
+      }
+    }
+
+    @Module({
+      controllers: [TestController],
+      imports: [
+        ClientsModule.register([{ name: ClientToken, customClass: LambdaMicroserviceClient, options: { broker } }]),
+      ],
+      providers: [
+        { provide: APP_PIPE, useClass: TransformPipe },
+        { provide: APP_PIPE, useFactory: ValidationPipeFactory },
+      ],
+    })
+    class TestAppModule {}
+
+    it.each([
+      [
+        'v1',
+        makeApiGatewayEventV1({
+          httpMethod: 'POST',
+          resource: '/v1/my-resources',
+          path: '/v1/my-resources',
+          pathParameters: {},
+          queryStringParameters: {},
+          body: JSON.stringify({ title: `The Hitchhiker's Guide to the Galaxy` }),
+        }),
+      ],
+      [
+        'v2',
+        makeApiGatewayEventV2({
+          routeKey: 'POST /v1/my-resources',
+          rawPath: '/v1/my-resources',
+          pathParameters: {},
+          queryStringParameters: {},
+          body: JSON.stringify({ title: `The Hitchhiker's Guide to the Galaxy` }),
+        }),
+      ],
+    ])('should qualify the handler that partially matches the message attributes %s', async (_version, event) => {
+      const handler = makeLambdaHandler(TestAppModule, broker)
+
+      const response = await handler(event, lambdaContextFactory())
+
+      expect(response).toEqual({ statusCode: 200, body: 'handlerMethod' })
     })
   })
 })

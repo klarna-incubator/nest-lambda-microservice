@@ -16,6 +16,7 @@ import {
   SqsRequestBuilder,
   SqsResponseBuilder,
 } from '../record-builders'
+
 import { isApiGatewayEvent, isS3Event, isEventBridgeEvent, isSnsEvent, isSqsEvent } from './integrations'
 
 export class EventMapper {

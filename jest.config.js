@@ -3,14 +3,18 @@
  * https://jestjs.io/docs/en/configuration.html
  */
 
+const { resolve } = require('path')
 const projectConfig = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   rootDir: process.cwd(),
-  moduleNameMapper: {},
   moduleFileExtensions: ['js', 'json', 'ts'],
   modulePathIgnorePatterns: ['dist'],
   clearMocks: true,
+  moduleNameMapper: {
+    '@klarna/nest-lambda-microservice/(.*)': resolve(__dirname, 'src/$1'),
+    '@klarna/nest-lambda-microservice': resolve(__dirname, 'src'),
+  },
 }
 
 module.exports = {

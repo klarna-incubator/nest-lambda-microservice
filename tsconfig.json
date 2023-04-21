@@ -9,8 +9,13 @@
     "declaration": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@klarna/nest-lambda-microservice": ["src"],
+      "@klarna/nest-lambda-microservice/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*", "test/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src", "test", "examples"],
+  "exclude": ["node_modules"],
 }

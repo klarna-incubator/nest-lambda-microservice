@@ -5,6 +5,7 @@ import { ClientsModule, MessagePattern, Payload } from '@nestjs/microservices'
 import { ClientToken, LambdaMicroserviceBrokerFactory, LambdaMicroserviceClient } from '../../src'
 import { makeLambdaHandler } from '../handler'
 import { lambdaContextFactory } from '../context'
+
 import { makeSnsEvent } from './events'
 
 describe('SNS > Lambda', () => {
