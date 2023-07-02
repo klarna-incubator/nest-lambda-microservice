@@ -11,6 +11,10 @@ export class CustomResponseBuilder implements ResponseBuilder {
       }
     }
 
+    if (!this.responseTuples.length) {
+      return undefined
+    }
+
     if (this.responseTuples.length > 1) {
       return this.responseTuples.map((tuple) => tuple[1])
     }
