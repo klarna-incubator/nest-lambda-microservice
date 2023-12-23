@@ -2,10 +2,18 @@
 
 import { DynamoDBRecord, DynamoDBStreamEvent } from 'aws-lambda'
 
-export const isDynamoDbRecord = (record: any): record is DynamoDBRecord => {
-  return record?.eventSource === 'aws:dynamodb'
+export const isDynamoDbRecord = (record: unknown): record is DynamoDBRecord => {
+  return (
+    record !== null && typeof record === 'object' && 'eventSource' in record && record?.eventSource === 'aws:dynamodb'
+  )
 }
 
-export const isDynamoDbEvent = (event: any): event is DynamoDBStreamEvent => {
-  return event && typeof event === 'object' && Array.isArray(event?.Records) && event.Records.every(isDynamoDbRecord)
+export const isDynamoDbEvent = (event: unknown): event is DynamoDBStreamEvent => {
+  return (
+    event !== null &&
+    typeof event === 'object' &&
+    'Records' in event &&
+    Array.isArray(event?.Records) &&
+    event.Records.every(isDynamoDbRecord)
+  )
 }

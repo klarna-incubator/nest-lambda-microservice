@@ -28,7 +28,7 @@ export class SnsRequestBuilder implements RequestBuilder {
       case 'String':
         try {
           return messageAttribute.Value ? JSON.parse(messageAttribute.Value) : ''
-        } catch (_error: any) {
+        } catch (_error: unknown) {
           return messageAttribute.Value ?? ''
         }
       case 'String.Array':
@@ -43,7 +43,10 @@ export class SnsRequestBuilder implements RequestBuilder {
 
   protected pattern: SnsRecordPattern = {}
 
-  constructor(protected readonly data: SNSEventRecord, protected readonly context: Context) {
+  constructor(
+    protected readonly data: SNSEventRecord,
+    protected readonly context: Context,
+  ) {
     this.pattern = SnsRequestBuilder.buildPattern(this.data)
   }
 

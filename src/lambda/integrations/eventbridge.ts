@@ -11,6 +11,7 @@ interface JSONObject {
 type JSONArray = Array<JSONValue>
 
 export type AnyEventBridgeEvent = EventBridgeEvent<string, JSONValue>
+export type EventBridgeCronEvent = EventBridgeEvent<'Scheduled Event', Record<string, unknown>>
 
 export const isEventBridgeEvent = (event: unknown): event is AnyEventBridgeEvent => {
   return (

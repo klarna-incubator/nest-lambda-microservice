@@ -2,16 +2,18 @@ import { PATTERN_EXTRAS_METADATA, PATTERN_METADATA } from '@nestjs/microservices
 
 import { PartialMatchExtraProp } from '../server'
 
-const getClassMethods = (target: any): ((...args: unknown[]) => unknown)[] => {
+const getClassMethods = (target: unknown): ((...args: unknown[]) => unknown)[] => {
   const ret = new Set<(...args: unknown[]) => unknown>()
 
-  function methods(obj: any) {
-    if (obj) {
+  function methods(obj: unknown) {
+    if (obj !== null && typeof obj === 'object') {
       const ps = Object.getOwnPropertyNames(obj)
 
       ps.forEach((p) => {
-        if (obj[p] instanceof Function && Reflect.hasMetadata(PATTERN_METADATA, obj[p])) {
-          ret.add(obj[p])
+        const value = Reflect.get(obj, p)
+
+        if (value instanceof Function && Reflect.hasMetadata(PATTERN_METADATA, value)) {
+          ret.add(value)
         }
       })
 
@@ -19,7 +21,9 @@ const getClassMethods = (target: any): ((...args: unknown[]) => unknown)[] => {
     }
   }
 
-  methods(target.prototype)
+  if (target !== null && typeof target === 'function' && 'prototype' in target) {
+    methods(target.prototype)
+  }
 
   return Array.from(ret)
 }

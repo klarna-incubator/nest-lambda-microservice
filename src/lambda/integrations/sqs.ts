@@ -4,12 +4,18 @@ import { SNSMessage, SQSEvent, SQSRecord } from 'aws-lambda'
 
 import { isSnsMessage } from './sns'
 
-export const isSqsRecord = (record: any): record is SQSRecord => {
-  return record?.eventSource === 'aws:sqs'
+export const isSqsRecord = (record: unknown): record is SQSRecord => {
+  return typeof record === 'object' && record !== null && 'eventSource' in record && record?.eventSource === 'aws:sqs'
 }
 
-export const isSqsEvent = (event: any): event is SQSEvent => {
-  return event && typeof event === 'object' && Array.isArray(event?.Records) && event.Records.every(isSqsRecord)
+export const isSqsEvent = (event: unknown): event is SQSEvent => {
+  return (
+    event !== null &&
+    typeof event === 'object' &&
+    'Records' in event &&
+    Array.isArray(event?.Records) &&
+    event.Records.every(isSqsRecord)
+  )
 }
 
 export const tryUnwrapSnsMessageFromSqsRecord = (record: SQSRecord): SNSMessage | never => {
@@ -22,7 +28,7 @@ export const tryUnwrapSnsMessageFromSqsRecord = (record: SQSRecord): SNSMessage 
   return parsedBody
 }
 
-export const isSqsRecordWithEmbeddedSnsMessage = (record: any): record is SQSRecord => {
+export const isSqsRecordWithEmbeddedSnsMessage = (record: unknown): record is SQSRecord => {
   if (!isSqsRecord(record)) {
     return false
   }

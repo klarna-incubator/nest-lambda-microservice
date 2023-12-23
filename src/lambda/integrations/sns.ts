@@ -2,14 +2,28 @@
 
 import { SNSEvent, SNSEventRecord, SNSMessage } from 'aws-lambda'
 
-export const isSnsMessage = (payload: any): payload is SNSMessage => {
-  return payload?.Type === 'Notification' && payload?.TopicArn?.startsWith('arn:aws:sns')
+export const isSnsMessage = (payload: unknown): payload is SNSMessage => {
+  return (
+    payload !== null &&
+    typeof payload === 'object' &&
+    'Type' in payload &&
+    'TopicArn' in payload &&
+    typeof payload.TopicArn === 'string' &&
+    payload?.Type === 'Notification' &&
+    payload?.TopicArn?.startsWith('arn:aws:sns')
+  )
 }
 
-export const isSnsRecord = (record: any): record is SNSEventRecord => {
-  return record?.EventSource === 'aws:sns'
+export const isSnsRecord = (record: unknown): record is SNSEventRecord => {
+  return record !== null && typeof record === 'object' && 'EventSource' in record && record?.EventSource === 'aws:sns'
 }
 
-export const isSnsEvent = (event: any): event is SNSEvent => {
-  return event && typeof event === 'object' && Array.isArray(event?.Records) && event.Records.every(isSnsRecord)
+export const isSnsEvent = (event: unknown): event is SNSEvent => {
+  return (
+    event !== null &&
+    typeof event === 'object' &&
+    'Records' in event &&
+    Array.isArray(event?.Records) &&
+    event.Records.every(isSnsRecord)
+  )
 }

@@ -37,7 +37,7 @@ export class SqsRequestBuilder implements RequestBuilder {
       case 'String':
         try {
           return messageAttribute.stringValue ? JSON.parse(messageAttribute.stringValue) : ''
-        } catch (_error: any) {
+        } catch (_error: unknown) {
           return messageAttribute.stringValue ?? ''
         }
       case 'Number':
@@ -50,7 +50,10 @@ export class SqsRequestBuilder implements RequestBuilder {
 
   protected pattern: SqsRecordPattern = {}
 
-  constructor(protected readonly data: SQSRecord, protected readonly context: Context) {
+  constructor(
+    protected readonly data: SQSRecord,
+    protected readonly context: Context,
+  ) {
     this.pattern = SqsRequestBuilder.buildPattern(this.data)
   }
 

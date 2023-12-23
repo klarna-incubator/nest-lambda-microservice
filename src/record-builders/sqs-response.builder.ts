@@ -4,7 +4,8 @@ import { IncomingResponseError } from '../errors'
 import { ResponseBuilder, ResponseTuple } from '../interfaces'
 
 export class SqsResponseBuilder implements ResponseBuilder {
-  public static isSQSBatchItemFailure = (item: any): item is SQSBatchItemFailure => Boolean(item?.itemIdentifier)
+  public static isSQSBatchItemFailure = (item: unknown): item is SQSBatchItemFailure =>
+    typeof item === 'object' && item !== null && 'itemIdentifier' in item && Boolean(item?.itemIdentifier)
 
   public static responseCompareFn = (a: SQSBatchItemFailure, b: SQSBatchItemFailure) =>
     (a?.itemIdentifier ?? '').localeCompare(b?.itemIdentifier ?? '')
