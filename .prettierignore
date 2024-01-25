@@ -1,0 +1,11 @@
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+.github/**
+.prettierrc
+*.json
+dist
+coverage
+*.md
+LICENSE

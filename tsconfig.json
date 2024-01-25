@@ -1,0 +1,21 @@
+{
+  "extends": ["@tsconfig/node18/tsconfig.json", "./tsconfig.build.json"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "outDir": "dist",
+    "incremental": false,
+    "noImplicitAny": true,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@klarna/nest-lambda-microservice": ["src"],
+      "@klarna/nest-lambda-microservice/*": ["src/*"]
+    }
+  },
+  "include": ["src", "test", "examples"],
+  "exclude": ["node_modules"],
+}
