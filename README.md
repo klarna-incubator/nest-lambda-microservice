@@ -1,12 +1,20 @@
-# Project Name
-> Short blurb about what your project does.
+# Nest Lambda Microservice
+> Custom transport implementation for NestJS microservice that facilitates writing applications based on NestJS for AWS Lambda.  
 
-[![Build Status][ci-image]][ci-url]
-[![License][license-image]][license-url]
-[![Developed at Klarna][klarna-image]][klarna-url]
+[//]: # ([![Build Status][ci-image]][ci-url])
+[//]: # ([![License][license-image]][license-url])
+[//]: # ([![Developed at Klarna][klarna-image]][klarna-url])
 
+## About The Project
+The **nest-lambda-microservice** library enables you implement AWS Lambda functions using [NestJS](https://docs.nestjs.com/) framework in a microservice architectural style.
+This library fills the void, of not being able to run HTTP-style applications on AWS Lambda, with the ability to run RPC-style application using [NestJS microservice](https://docs.nestjs.com/microservices/basics).
 
-One to two paragraph statement about your project and what it does.
+How it works in a nutshell:
+1. Creates an instance of NestJS application outside the AWS Lambda handler and cache it for as long as the Lambda execution environment is up.
+2. Emit the events received by the Lambda instance to the NestJS application via the event broker.
+3. The NestJS application uses qualification criteria to identify which handler (controller method) qualifies the request and sends it for processing.
+4. Once the handler processed the request and returned a response, the response is mapped or ignored based on the Lambda event source.
+
 
 ## First steps
 
@@ -53,7 +61,7 @@ See our [changelog](CHANGELOG.md).
 
 ## License
 
-Copyright © 2022 Klarna Bank AB
+Copyright © 2023 Klarna Bank AB
 
 For license details, see the [LICENSE](LICENSE) file in the root of this project.
 
