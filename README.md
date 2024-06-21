@@ -1,56 +1,182 @@
 # Nest Lambda Microservice
-> Custom transport implementation for NestJS microservice that facilitates writing applications based on NestJS for AWS Lambda.  
-
+[![main](https://github.com/klarna-incubator/nest-lambda-microservice/actions/workflows/main.yml/badge.svg)](https://github.com/klarna-incubator/nest-lambda-microservice/actions/workflows/main.yml)
 [//]: # ([![Build Status][ci-image]][ci-url])
 [//]: # ([![License][license-image]][license-url])
 [//]: # ([![Developed at Klarna][klarna-image]][klarna-url])
 
-## About The Project
-The **nest-lambda-microservice** library enables you implement AWS Lambda functions using [NestJS](https://docs.nestjs.com/) framework in a microservice architectural style.
-This library fills the void, of not being able to run HTTP-style applications on AWS Lambda, with the ability to run RPC-style application using [NestJS microservice](https://docs.nestjs.com/microservices/basics).
+> Custom transporter implementation for running NestJS based applications on AWS Lambda.
 
-How it works in a nutshell:
-1. Creates an instance of NestJS application outside the AWS Lambda handler and cache it for as long as the Lambda execution environment is up.
-2. Emit the events received by the Lambda instance to the NestJS application via the event broker.
-3. The NestJS application uses qualification criteria to identify which handler (controller method) qualifies the request and sends it for processing.
-4. Once the handler processed the request and returned a response, the response is mapped or ignored based on the Lambda event source.
+<img src="assets/nest-lambda-microservice.jpg"/>
+The **nest-lambda-microservice** is a custom [NestJS transporter](https://docs.nestjs.com/microservices/custom-transport) solution that enables writing NestJS applications to process events on [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/lambda-nodejs.html).
 
+# Table of contents
+- [Overview](#overview)
+- [Pattern Matching](#pattern-matching)
+- [Message Processing](#message-processing)
 
-## First steps
+## Overview
+In addition to the traditional HTTP style architecture, NestJS framework support writing microservice applications that use transport layers other than HTTP.
+This library implements a custom transporter for AWS Lambda, enabling NestJS applications running on AWS Lambda to process events from various sources (SNS, SQS, AWS Gateway, etc.) using all the concepts NestJS supports such as dependency injection, decorators, exception filters, pipes, guards and interceptors.
 
-<details>
- <summary>Installation (for Admins)</summary>
-  
-  Currently, new repositories can be created only by a Klarna Open Source community lead. Please reach out to us if you need assistance.
-  
-  1. Create a new repository by clicking ‘Use this template’ button.
-  
-  2. Make sure your newly created repository is private.
-  
-  3. Enable Dependabot alerts in your candidate repo settings under Security & analysis. You need to enable ‘Allow GitHub to perform read-only analysis of this repository’ first.
-</details>
+A Nest Lambda Microservice application is composed of a client, a broker and a server.
 
-1. Update `README.md` and `CHANGELOG.md`.
+The client provider exposes a public method `processEvent(event: unknown, context: Context)` that is invoked by the Lambda handler.
+Based on the event source, the event is mapped into one or multiple messages and published to the broker, e.g. an API Gateway event results in one message, but an SQS Event containing multiple Records, results in multiple messages published separately to the broker. 
 
-2. Optionally, clone [the default contributing guide](https://github.com/klarna-incubator/.github/blob/main/CONTRIBUTING.md) into `.github/CONTRIBUTING.md`.
+The client awaits the processing of the messages and assembles a response to be returned by the Lambda handler based on the returned values from the handler that qualified and processed the message.
 
-3. Do *not* edit `LICENSE`.
+## Pattern Matching
+To fulfill the NestJS microservice contract, the nest-lambda-microservice library implements the mapping of the incoming Lambda event to the NestJS microservice message pattern based on the Lambda event source.
 
-## Usage example
-
-A few motivating and useful examples of how your project can be used. Spice this up with code blocks and potentially more screenshots.
-
-_For more examples and usage, please refer to the [Docs](TODO)._
-
-## Development setup
-
-Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
-
-```sh
-make install
-npm test
+### Full message pattern qualification
+The message pattern is used to qualify a specific controller handler to process the event. The handler matching exactly the message pattern qualifies to process the message:
+```typescript
+@Controller()
+export class Controller {
+  @MessagePattern({ action: 'foo', resourceId: '1' }) 
+  public processFoo() {}
+}
 ```
 
+### Partial message pattern qualification
+By default, the Lambda microservice attempts to qualify the handler methods by performing a full match of the incoming message pattern and the handler pattern.
+To allow partial pattern matches, one can provide the `partialMatch` option to the `MessagePattern` or mark the entire controller to use partial matches using the provided decorator.
+```typescript
+@Controller()
+export class Controller {
+  @MessagePattern({ action: 'foo' }, { partialMatch: true }) // Applies partial match on a specific handler only
+  public processFoo() {}
+}
+```
+
+```typescript
+@UsePartialPatternMatch() // Applies partial match on all controller handlers
+@Controller()
+export class Controller {
+  @MessagePattern({ action: 'foo' })
+  public processFoo() {}
+}
+```
+
+### Catch-all pattern
+When no controller qualifies the message pattern, a lookup for a "catch-all" handler identified by `*` pattern qualifier is performed.
+If no such handler is defined, the message is rejected and the Lambda event processing fails.
+
+```typescript
+@Controller()
+export class Controller {
+  @MessagePattern({ action: 'foo' }) // Qualifies messages with { action: 'foo' } patters 
+  public processFoo() {}
+  
+  @MessagePattern('*') // Qualifies messages with patterns other than { action: 'foo' }
+  public processBarBazAndCo() {}
+}
+```
+
+## Message Processing
+The Nest Lambda Microservice supports sync/async Request/Response message style (see more details on the [NestJS documentation](https://docs.nestjs.com/microservices/basics#request-response) page).
+
+The two inputs into the Lambda function can be accessed in the NestJS application using the dependency injection:
+```typescript
+import { Controller } from '@nestjs/common'
+import { Ctx, MessagePattern, Payload } from '@nestjs/microservices'
+import { LambdaContext } from '@klarna/lambda-microservice'
+
+@Controller()
+export class Controller {
+  @MessagePattern('*') 
+  public processAnyMessage(
+    @Payload() inboundMessage: unknown,
+    @Ctx() context: LambdaContext 
+  ) {
+    console.log(inboundMessage) // The message as mapped from the input lambda event
+    console.log(context.getLambdaInvocationContext()) // The Lambda function context object
+  }
+}
+```
+
+### API Gateway Event
+The incoming API Gateway Event is mapped to the message pattern using the following logic:
+
+```typescript
+interface ApiGatewayPattern {
+  httpMethod: string
+  resource: string
+  queryStringParameters: Record<string, unknown> | null
+  pathParameters: Record<string, unknown> | null
+}
+```
+
+The message payload is the original API Gateway event.
+
+For more details see [this example](examples/api-gateway).
+
+### Custom Request Event
+The incoming custom event is any event used to manually invoke the AWS Lambda
+
+```typescript
+type CustomEventPattern = '*'
+```
+
+The message payload is the original payload the Lambda was invoked with.
+
+For more details see [this example](examples/custom).
+
+### Event Bridge Event
+The incoming Event Bridge event is mapped to the message pattern using the following logic:
+
+```typescript
+interface EventBridgePattern {
+  source: string
+  detailType: string    // The Event Bridge event detail-type
+  detail: JSONValue     // The Event Bridge event detail
+}
+```
+
+The message payload is the original EventBridge event.
+
+For more details see [this example](examples/event-bridge).
+
+### S3 Event
+The S3 event is mapped using the following logic:
+
+```typescript
+interface S3RecordPattern {
+  eventName: string
+  bucketName: string
+  objectKey: string
+}
+```
+
+The message payload is a Record from the original S3 event.
+
+For more details see [this example](examples/s3).
+
+### SNS Event
+The SNS events are mapped using the event attributes
+
+```typescript
+interface SnsRecordPattern {
+  [key: string]: string | number
+}
+```
+
+The message payload is the SNSMessage.
+
+For more details see [this example](examples/sns).
+
+### SQS Event
+The SQS events are mapped using the event attributes
+
+```typescript
+interface SqsRecordPattern {
+  [key: string]: string | number
+}
+```
+
+The message payload is a Record from the original SQS event.
+
+For more details see [this example](examples/sqs).
 ## How to contribute
 
 See our guide on [contributing](.github/CONTRIBUTING.md).

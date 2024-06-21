@@ -10,7 +10,7 @@ import { CustomEventBody } from '../dto'
 export class BooksController {
   constructor(protected readonly booksService: BooksService) {}
 
-  @MessagePattern<Partial<CustomRecordPattern>>('*') // The custom lambda event can be processed only in a catch-all handler, hence not very useful when building rich lambda based applications
+  @MessagePattern<CustomRecordPattern>('*') // The custom lambda event can be processed only in a catch-all handler, hence not very useful when building rich lambda based applications
   public async createBook(@Payload() customEvent: CustomEventBody) {
     switch (customEvent.operation) {
       case 'createBook':
