@@ -1,8 +1,8 @@
 # Nest Lambda Microservice
 [![main](https://github.com/klarna-incubator/nest-lambda-microservice/actions/workflows/main.yml/badge.svg)](https://github.com/klarna-incubator/nest-lambda-microservice/actions/workflows/main.yml)
-[//]: # ([![Build Status][ci-image]][ci-url])
-[//]: # ([![License][license-image]][license-url])
-[//]: # ([![Developed at Klarna][klarna-image]][klarna-url])
+([![Build Status][ci-image]][ci-url])
+([![License][license-image]][license-url])
+([![Developed at Klarna][klarna-image]][klarna-url])
 
 > Custom transporter implementation for running NestJS based applications on AWS Lambda.
 
@@ -13,6 +13,8 @@ The **nest-lambda-microservice** is a custom [NestJS transporter](https://docs.n
 - [Overview](#overview)
 - [Pattern Matching](#pattern-matching)
 - [Message Processing](#message-processing)
+- [Release History](#release-history)
+- [License](#license)
 
 ## Overview
 In addition to the traditional HTTP style architecture, NestJS framework support writing microservice applications that use transport layers other than HTTP.
@@ -177,6 +179,7 @@ interface SqsRecordPattern {
 The message payload is a Record from the original SQS event.
 
 For more details see [this example](examples/sqs).
+
 ## How to contribute
 
 See our guide on [contributing](.github/CONTRIBUTING.md).
@@ -187,7 +190,7 @@ See our [changelog](CHANGELOG.md).
 
 ## License
 
-Copyright © 2023 Klarna Bank AB
+Copyright © 2024 Klarna Bank AB
 
 For license details, see the [LICENSE](LICENSE) file in the root of this project.
 
