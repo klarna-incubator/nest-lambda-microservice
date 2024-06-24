@@ -8,7 +8,7 @@
 
 <img src="assets/nest-lambda-microservice.jpg"/>
 
-The **nest-lambda-microservice** is a custom [NestJS transporter](https://docs.nestjs.com/microservices/custom-transport) solution that enables writing NestJS applications to process events on [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/lambda-nodejs.html).
+The **Nest Lambda Microservice** is a custom [NestJS transporter](https://docs.nestjs.com/microservices/custom-transport) solution that enables writing NestJS applications to process events on [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/lambda-nodejs.html).
 
 # Table of contents
 - [Overview](#overview)
