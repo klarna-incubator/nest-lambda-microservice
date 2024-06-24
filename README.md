@@ -34,11 +34,164 @@ Based on the event source, the event is mapped into one or multiple messages and
 
 The client awaits the processing of the messages and assembles a response to be returned by the Lambda handler based on the returned values from the handler that qualified and processed the message.
 
+A sample Lambda application processing SQS events (more examples are available in [this](examples) folder)
+```typescript
+/* index.ts */
+
+import { Context } from 'aws-lambda'
+
+import { getLambdaMicroserviceClient } from './microservice'
+
+export const handler = async (event: unknown, context: Context) => {
+  const client = await getLambdaMicroserviceClient()
+
+  return await client.processEvent(event, context)
+}
+```
+
+```typescript
+/* microservice.ts */
+
+import { INestMicroservice } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import { MicroserviceOptions } from '@nestjs/microservices'
+import { ClientToken, LambdaMicroserviceServer } from '@klarna/nest-lambda-microservice'
+
+import { broker } from './broker'
+import { AppModule } from './app.module'
+
+let microservice: INestMicroservice
+export const getOrCreateLambdaMicroservice = async () => {
+  if (!microservice) {
+    microservice = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+      strategy: new LambdaMicroserviceServer({ broker }),
+      logger: false,
+      abortOnError: false,
+    })
+
+    await microservice.listen()
+  }
+
+  return microservice
+}
+
+export const getLambdaMicroserviceClient = async () => {
+  return await (await getOrCreateLambdaMicroservice()).resolve(ClientToken)
+}
+```
+
+```typescript
+/* app.module.ts */
+
+import { Module } from '@nestjs/common'
+import { ClientsModule } from '@nestjs/microservices'
+import { ClientToken, LambdaMicroserviceClient } from '@klarna/nest-lambda-microservice'
+import { APP_FILTER, APP_PIPE } from '@nestjs/core'
+
+import { broker } from './broker'
+
+import { BooksController } from './books.controller.ts'
+import { BooksService } from './books.service.ts'
+import { TransformPipe } from './transform.pipe.ts'
+
+@Module({
+  controllers: [BooksController],
+  providers: [
+    BooksService,
+    { provide: APP_PIPE, useClass: TransformPipe }
+  ],
+  imports: [
+    ClientsModule.register([{ name: ClientToken, customClass: LambdaMicroserviceClient, options: { broker } }]),
+  ],
+})
+export class AppModule {}
+```
+
+```typescript
+/* transform.pipe.ts */
+
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common'
+
+@Injectable()
+export class TransformPipe implements PipeTransform {
+  public transform(value: any, _metadata: ArgumentMetadata) {
+    return this.tryParseJson<any>(value)
+  }
+
+  protected tryParseJson<T>(value: string): T | string {
+    try {
+      return JSON.parse(value)
+    } catch (_error: unknown) {
+      return value
+    }
+  }
+}
+```
+
+```typescript
+/* books.service.ts */
+
+import { Injectable, Scope } from '@nestjs/common'
+import { v4 } from 'uuid'
+
+export interface Book {
+  id: string
+  title: string
+}
+
+@Injectable({ scope: Scope.DEFAULT })
+export class BooksService {
+  protected books = new Map<string, Book>()
+  
+  public async saveNewBook(title: string) {
+    const book = { id: v4(), title }
+
+    this.books.set(book.id, book)
+
+    return book
+  }
+}
+```
+
+```typescript
+/* create-book.dto.ts */
+
+import { IsString } from 'class-validator'
+
+export class CreateBookDto {
+  @IsString()
+  public title: string
+}
+```
+
+```typescript
+/* books.controller.ts */
+
+import { Controller } from '@nestjs/common'
+import { MessagePattern, Payload } from '@nestjs/microservices'
+import { SqsRecordPattern, UsePartialPatternMatch } from '@klarna/nest-lambda-microservice'
+
+import { CreateBookDto } from './create-book.dto.ts'
+
+@Controller()
+@UsePartialPatternMatch()
+export class BooksController {
+  constructor(protected readonly booksService: BooksService) {}
+
+  @MessagePattern<Partial<SqsRecordPattern>>({ Operation: 'CreateBook' }) // Can be anything set on the SQS Record attributes
+  public async createBook(@Payload('body') sqsRecordBody: CreateBookDto) {
+    // The transform pipe parsed the serialised sqs record body
+    await this.booksService.saveNewBook(sqsRecordBody.title)
+  }
+}
+```
+
 ## Pattern Matching
 To fulfill the NestJS microservice contract, the nest-lambda-microservice transporter implements the mapping of the incoming Lambda event to the NestJS microservice message pattern based on the Lambda event source.
 
 ### Full message pattern qualification
 The message pattern is used to qualify a specific controller handler to process the event. The handler matching exactly the message pattern qualifies to process the message:
+
 ```typescript
 @Controller()
 export class Controller {
