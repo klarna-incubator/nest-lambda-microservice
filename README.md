@@ -35,7 +35,7 @@ Based on the event source, the event is mapped into one or multiple messages and
 The client awaits the processing of the messages and assembles a response to be returned by the Lambda handler based on the returned values from the handler that qualified and processed the message.
 
 ## Pattern Matching
-To fulfill the NestJS microservice contract, the nest-lambda-microservice library implements the mapping of the incoming Lambda event to the NestJS microservice message pattern based on the Lambda event source.
+To fulfill the NestJS microservice contract, the nest-lambda-microservice transporter implements the mapping of the incoming Lambda event to the NestJS microservice message pattern based on the Lambda event source.
 
 ### Full message pattern qualification
 The message pattern is used to qualify a specific controller handler to process the event. The handler matching exactly the message pattern qualifies to process the message:
