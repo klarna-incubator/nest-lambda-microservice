@@ -19,7 +19,13 @@ The **Nest Lambda Microservice** is a custom [NestJS transporter](https://docs.n
 
 ## Overview
 In addition to the traditional HTTP style architecture, NestJS framework support writing microservice applications that use transport layers other than HTTP.
-This library implements a custom transporter for AWS Lambda, enabling NestJS applications running on AWS Lambda to process events from various sources (SNS, SQS, AWS Gateway, etc.) using all the concepts NestJS supports such as dependency injection, decorators, exception filters, pipes, guards and interceptors.
+This library implements a custom transporter for AWS Lambda, enabling NestJS applications running on AWS Lambda to process events from various sources (SNS, SQS, AWS Gateway, etc.) using all the concepts NestJS supports such as 
+- [dependency injection](https://docs.nestjs.com/fundamentals/custom-providers)
+- [decorators](https://docs.nestjs.com/custom-decorators)
+- [exception filters](https://docs.nestjs.com/exception-filters)
+- [pipes](https://docs.nestjs.com/pipes)
+- [guards](https://docs.nestjs.com/guards)
+- [interceptors](https://docs.nestjs.com/interceptors)
 
 A Nest Lambda Microservice application is composed of a client, a broker and a server.
 
