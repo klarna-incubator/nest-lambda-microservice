@@ -1,8 +1,8 @@
 # Nest Lambda Microservice
 [![main](https://github.com/klarna-incubator/nest-lambda-microservice/actions/workflows/main.yml/badge.svg)](https://github.com/klarna-incubator/nest-lambda-microservice/actions/workflows/main.yml)
-([![Build Status][ci-image]][ci-url])
-([![License][license-image]][license-url])
-([![Developed at Klarna][klarna-image]][klarna-url])
+[![Build Status][ci-image]][ci-url]
+[![License][license-image]][license-url]
+[![Developed at Klarna][klarna-image]][klarna-url]
 
 > Custom transporter implementation for running NestJS based applications on AWS Lambda.
 
