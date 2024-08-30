@@ -1,13 +1,12 @@
-import { Module } from '@nestjs/common'
-import { ClientsModule } from '@nestjs/microservices'
 import { ClientToken, LambdaMicroserviceClient } from '@klarna/nest-lambda-microservice'
+import { Module } from '@nestjs/common'
 import { APP_FILTER, APP_PIPE } from '@nestjs/core'
+import { ClientsModule } from '@nestjs/microservices'
 
 import { broker } from '../broker'
-
 import { BooksController } from './controllers'
-import { TransformPipe, ValidationPipeFactory } from './pipes'
 import { ExceptionFilter } from './filters'
+import { TransformPipe, ValidationPipeFactory } from './pipes'
 import { BooksService } from './providers'
 
 @Module({

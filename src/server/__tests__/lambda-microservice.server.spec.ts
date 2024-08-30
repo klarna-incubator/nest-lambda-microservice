@@ -1,6 +1,6 @@
-import { InvalidMessageException } from '@nestjs/microservices/errors/invalid-message.exception'
-import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { MessageHandler } from '@nestjs/microservices'
+import { InvalidMessageException } from '@nestjs/microservices/errors/invalid-message.exception'
 
 import { LambdaMicroserviceServer } from '../lambda-microservice.server'
 import { LambdaMicroserviceBrokerFactory } from '../mocks'
@@ -73,9 +73,7 @@ describe('LambdaMicroserviceServer', () => {
       server.addHandler({ Val1: 'Value 1', Val2: 'Value 2', Val3: ['Foo', 'Bar'] }, handler, false)
 
       expect(server.getHandlerByPattern('')).toBeNull()
-      expect(server.getHandlerByPattern({ Val1: 'Value 1', Val2: 'Value 2', Val3: ['Foo', 'Bar'] } as any)).toEqual(
-        handler,
-      )
+      expect(server.getHandlerByPattern({ Val1: 'Value 1', Val2: 'Value 2', Val3: ['Foo', 'Bar'] })).toEqual(handler)
     })
 
     it('should match a MsObjectPattern regardless of the sorting', () => {

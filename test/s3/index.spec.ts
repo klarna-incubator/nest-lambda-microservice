@@ -1,12 +1,11 @@
-import { jest, describe, afterEach, it, expect } from '@jest/globals'
+import { afterEach, describe, expect, it, jest } from '@jest/globals'
 import { Controller, Module } from '@nestjs/common'
 import { ClientsModule, MessagePattern, Payload, RpcException } from '@nestjs/microservices'
 import { S3EventRecord } from 'aws-lambda/trigger/s3'
 
 import { ClientToken, LambdaMicroserviceBrokerFactory, LambdaMicroserviceClient, S3RecordPattern } from '../../src'
-import { makeLambdaHandler } from '../handler'
 import { lambdaContextFactory } from '../context'
-
+import { makeLambdaHandler } from '../handler'
 import { makeS3Event } from './events'
 
 describe('S3 > Lambda', () => {

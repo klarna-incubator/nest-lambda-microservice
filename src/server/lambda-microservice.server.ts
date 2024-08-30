@@ -8,7 +8,6 @@ import { IdentitySerializer } from '@nestjs/microservices/serializers'
 
 import { LambdaContext } from '../ctx-host'
 import { IncomingRequest } from '../interfaces'
-
 import { LambdaMicroserviceBroker, RequestEvent, ResponseEvent } from './lambda-microservice.broker'
 
 export interface LambdaMicroserviceServerOptions {
@@ -57,8 +56,13 @@ export class LambdaMicroserviceServer extends Server implements CustomTransportS
     this.broker.close()
   }
 
-  public addHandler(pattern: any, callback: MessageHandler, isEventHandler = false, extras: Record<string, any> = {}) {
-    const normalizedPattern = this.normalizePattern(pattern)
+  public addHandler(
+    pattern: unknown,
+    callback: MessageHandler,
+    isEventHandler = false,
+    extras: Record<string, unknown> = {},
+  ) {
+    const normalizedPattern = this.normalizePattern(pattern as MsPattern)
 
     // Guard against multiple handlers using same pattern
     if (this.handlerPatternsMap.has(normalizedPattern)) {
@@ -112,8 +116,8 @@ export class LambdaMicroserviceServer extends Server implements CustomTransportS
     }
   }
 
-  public getHandlerByPattern(messagePattern: MsPattern): MessageHandler | null {
-    const route = this.getRouteFromPattern(messagePattern as any) // The getRouteFromPattern typings is wrongly accepting just strings
+  public getHandlerByPattern(messagePattern: unknown): MessageHandler | null {
+    const route = this.getRouteFromPattern(messagePattern as never) // The getRouteFromPattern typings is wrongly accepting just strings
 
     try {
       // Exact match of the normalized pattern

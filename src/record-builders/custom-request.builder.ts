@@ -8,7 +8,10 @@ export type CustomRecordPattern = '*'
 export class CustomRequestBuilder implements RequestBuilder {
   protected pattern: CustomRecordPattern = '*'
 
-  constructor(protected readonly data: unknown, protected readonly context: Context) {}
+  constructor(
+    protected readonly data: unknown,
+    protected readonly context: Context,
+  ) {}
 
   public build(): OutgoingCustomRequest {
     return {

@@ -1,11 +1,10 @@
-import { jest, describe, afterEach, it, expect } from '@jest/globals'
+import { afterEach, describe, expect, it, jest } from '@jest/globals'
 import { Controller, Module } from '@nestjs/common'
 import { ClientsModule, MessagePattern, Payload } from '@nestjs/microservices'
 
 import { ClientToken, LambdaMicroserviceBrokerFactory, LambdaMicroserviceClient, SqsResponseBuilder } from '../../src'
-import { makeLambdaHandler } from '../handler'
 import { lambdaContextFactory } from '../context'
-
+import { makeLambdaHandler } from '../handler'
 import { makeSqsEvent } from './events'
 
 describe('SQS > Lambda', () => {

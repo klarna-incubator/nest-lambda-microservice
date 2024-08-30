@@ -37,7 +37,10 @@ export class ApiGatewayRequestBuilder implements RequestBuilder {
 
   protected pattern: ApiGatewayPattern
 
-  constructor(protected readonly data: AnyAPIGatewayEvent, protected readonly context: Context) {
+  constructor(
+    protected readonly data: AnyAPIGatewayEvent,
+    protected readonly context: Context,
+  ) {
     this.pattern = ApiGatewayRequestBuilder.buildPattern(this.data)
   }
 

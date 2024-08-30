@@ -1,7 +1,7 @@
 import { Context } from 'aws-lambda'
 
-import { AnyEventBridgeEvent, JSONValue } from '../lambda'
 import { OutgoingEventBridgeRequest, RequestBuilder } from '../interfaces'
+import { AnyEventBridgeEvent, JSONValue } from '../lambda'
 
 export interface EventBridgePattern {
   source: string
@@ -20,7 +20,10 @@ export class EventBridgeRequestBuilder implements RequestBuilder {
 
   protected pattern: EventBridgePattern
 
-  constructor(protected readonly data: AnyEventBridgeEvent, protected readonly context: Context) {
+  constructor(
+    protected readonly data: AnyEventBridgeEvent,
+    protected readonly context: Context,
+  ) {
     this.pattern = EventBridgeRequestBuilder.buildPattern(this.data)
   }
 

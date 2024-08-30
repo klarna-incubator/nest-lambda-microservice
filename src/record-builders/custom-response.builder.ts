@@ -5,7 +5,6 @@ export class CustomResponseBuilder implements ResponseBuilder {
   constructor(protected readonly responseTuples: ResponseTuple[]) {}
 
   public build() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_request, response] of this.responseTuples) {
       if (response instanceof IncomingResponseError) {
         throw response.cause

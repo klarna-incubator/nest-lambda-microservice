@@ -1,5 +1,5 @@
-import { Context } from 'aws-lambda'
 import { jest } from '@jest/globals'
+import { Context } from 'aws-lambda'
 
 export const lambdaContextFactory = (): Context => ({
   callbackWaitsForEmptyEventLoop: false,

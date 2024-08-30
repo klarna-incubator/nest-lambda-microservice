@@ -1,17 +1,16 @@
-import { jest, describe, afterEach, it, expect } from '@jest/globals'
+import { afterEach, describe, expect, it, jest } from '@jest/globals'
 import { Controller, Module } from '@nestjs/common'
 import { ClientsModule, MessagePattern, Payload } from '@nestjs/microservices'
 
 import {
+  AnyEventBridgeEvent,
   ClientToken,
+  EventBridgePattern,
   LambdaMicroserviceBrokerFactory,
   LambdaMicroserviceClient,
-  AnyEventBridgeEvent,
-  EventBridgePattern,
 } from '../../src'
-import { makeLambdaHandler } from '../handler'
 import { lambdaContextFactory } from '../context'
-
+import { makeLambdaHandler } from '../handler'
 import { makeEventBridgeEvent } from './events'
 
 describe('Event Bridge > Lambda', () => {
