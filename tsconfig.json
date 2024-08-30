@@ -1,5 +1,5 @@
 {
-  "extends": ["@tsconfig/node18/tsconfig.json", "./tsconfig.build.json"],
+  "extends": ["@tsconfig/node20/tsconfig.json", "./tsconfig.build.json"],
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": ".",
