@@ -1,10 +1,10 @@
+import { ClientToken, LambdaMicroserviceServer } from '@klarna/nest-lambda-microservice'
 import { INestMicroservice } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { MicroserviceOptions } from '@nestjs/microservices'
-import { ClientToken, LambdaMicroserviceServer } from '@klarna/nest-lambda-microservice'
 
-import { broker } from './broker'
 import { AppModule } from './app/app.module'
+import { broker } from './broker'
 
 let microservice: INestMicroservice
 export const getOrCreateLambdaMicroservice = async () => {

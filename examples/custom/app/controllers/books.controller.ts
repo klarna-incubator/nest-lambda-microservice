@@ -1,9 +1,9 @@
+import { CustomRecordPattern, UsePartialPatternMatch } from '@klarna/nest-lambda-microservice'
 import { Controller } from '@nestjs/common'
 import { MessagePattern, Payload } from '@nestjs/microservices'
-import { CustomRecordPattern, UsePartialPatternMatch } from '@klarna/nest-lambda-microservice'
 
-import { BooksService } from '../providers'
 import { CustomEventBody } from '../dto'
+import { BooksService } from '../providers'
 
 @Controller()
 @UsePartialPatternMatch()

@@ -1,9 +1,8 @@
 import { Context, SQSRecord } from 'aws-lambda'
 import { SQSMessageAttribute } from 'aws-lambda/trigger/sqs'
 
-import { tryUnwrapSnsMessageFromSqsRecord } from '../lambda'
 import { OutgoingSqsRequest, RequestBuilder } from '../interfaces'
-
+import { tryUnwrapSnsMessageFromSqsRecord } from '../lambda'
 import { SnsRequestBuilder } from './sns-request.builder'
 
 export interface SqsRecordPattern {

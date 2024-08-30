@@ -1,9 +1,9 @@
+import { SnsRecordPattern, SqsRecordPattern, UsePartialPatternMatch } from '@klarna/nest-lambda-microservice'
 import { Controller } from '@nestjs/common'
 import { MessagePattern, Payload } from '@nestjs/microservices'
-import { SnsRecordPattern, SqsRecordPattern, UsePartialPatternMatch } from '@klarna/nest-lambda-microservice'
 
+import { CreateBookBody, DeleteBookByIdParams, ListBooksQuery } from '../dto'
 import { BooksService } from '../providers'
-import { ListBooksQuery, DeleteBookByIdParams, CreateBookBody } from '../dto'
 
 @Controller()
 @UsePartialPatternMatch()

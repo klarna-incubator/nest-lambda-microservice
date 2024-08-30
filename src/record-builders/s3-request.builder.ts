@@ -20,7 +20,10 @@ export class S3RequestBuilder implements RequestBuilder {
 
   protected pattern: S3RecordPattern
 
-  constructor(protected readonly data: S3EventRecord, protected readonly context: Context) {
+  constructor(
+    protected readonly data: S3EventRecord,
+    protected readonly context: Context,
+  ) {
     this.pattern = S3RequestBuilder.buildPattern(this.data)
   }
 

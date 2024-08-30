@@ -5,10 +5,9 @@ import { catchError, map, merge, of, reduce } from 'rxjs'
 import { v4 } from 'uuid'
 
 import { IncomingResponseError } from '../errors'
+import type { IncomingResponse, LambdaMicroserviceOptions, OutgoingRequest, ResponseTuple } from '../interfaces'
 import { EventMapper } from '../lambda'
 import { LambdaMicroserviceBroker } from '../server'
-
-import type { IncomingResponse, LambdaMicroserviceOptions, OutgoingRequest, ResponseTuple } from '../interfaces'
 
 export const ClientToken = Symbol('LambdaMicroserviceClient')
 

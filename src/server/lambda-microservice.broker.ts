@@ -1,5 +1,4 @@
 import EventEmitter from 'events'
-
 import { ReplaySubject } from 'rxjs'
 
 import { NoConsumerError } from '../errors'
@@ -11,14 +10,18 @@ export type SupportedEvent = typeof RequestEvent | typeof ResponseEvent
 
 export class LambdaMicroserviceBroker extends EventEmitter {
   public listen(callbackFn?: (...args: unknown[]) => void) {
-    callbackFn && callbackFn()
+    if (callbackFn) {
+      callbackFn()
+    }
   }
 
   public close(callbackFn?: (...args: unknown[]) => void) {
     this.removeAllListeners(ResponseEvent)
     this.removeAllListeners(RequestEvent)
 
-    callbackFn && callbackFn()
+    if (callbackFn) {
+      callbackFn()
+    }
   }
 
   public sendRequest(outgoingRequest: OutgoingRequest): ReplaySubject<OutgoingResponse> {

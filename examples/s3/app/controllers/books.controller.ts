@@ -1,6 +1,6 @@
+import { S3RecordPattern, UsePartialPatternMatch } from '@klarna/nest-lambda-microservice'
 import { Controller } from '@nestjs/common'
 import { MessagePattern, Payload } from '@nestjs/microservices'
-import { S3RecordPattern, UsePartialPatternMatch } from '@klarna/nest-lambda-microservice'
 import { S3EventRecord } from 'aws-lambda/trigger/s3'
 
 import { BooksService } from '../providers'

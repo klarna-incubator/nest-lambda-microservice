@@ -1,17 +1,17 @@
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { Context } from 'aws-lambda'
-import { v4 } from 'uuid'
-import { expect, jest, beforeEach, afterEach, describe, it } from '@jest/globals'
 import { MockedFunction } from 'jest-mock'
+import { v4 } from 'uuid'
 
+import { LambdaMicroserviceBroker } from '../../server'
 import { LambdaMicroserviceBrokerFactory, mockServerResponse } from '../../server/mocks'
 import { LambdaMicroserviceClient } from '../lambda-microservice.client'
-import { LambdaMicroserviceBroker } from '../../server'
 
 jest.mock('uuid')
 
 describe('LambdaMicroserviceClient', () => {
   const requestId = '21edf5bc-8f37-457f-bcdb-207d9156c42f'
-  const contextFactory = () => ({} as Context)
+  const contextFactory = () => ({}) as Context
   const uuidV4 = v4 as MockedFunction<() => string>
   let broker: LambdaMicroserviceBroker
   let event: any

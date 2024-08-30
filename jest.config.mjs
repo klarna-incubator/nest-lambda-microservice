@@ -3,13 +3,19 @@
  * https://jestjs.io/docs/en/configuration.html
  */
 
-const { resolve } = require('path')
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
 const projectConfig = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   rootDir: process.cwd(),
   moduleFileExtensions: ['js', 'json', 'ts'],
-  modulePathIgnorePatterns: ['dist'],
+  modulePathIgnorePatterns: ['<rootDir>/dist/', '__mocks__/index.ts'],
+  testPathIgnorePatterns: ['<rootDir>/dist/.*', '<rootDir>/dist/package.json'],
   clearMocks: true,
   moduleNameMapper: {
     '@klarna/nest-lambda-microservice/(.*)': resolve(__dirname, 'src/$1'),
@@ -17,7 +23,7 @@ const projectConfig = {
   },
 }
 
-module.exports = {
+export default {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',

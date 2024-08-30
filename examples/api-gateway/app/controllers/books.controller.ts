@@ -1,9 +1,9 @@
+import { ApiGatewayPattern, UsePartialPatternMatch } from '@klarna/nest-lambda-microservice'
 import { Controller } from '@nestjs/common'
 import { MessagePattern, Payload } from '@nestjs/microservices'
-import { ApiGatewayPattern, UsePartialPatternMatch } from '@klarna/nest-lambda-microservice'
 
-import { Book, BooksService } from '../providers'
 import { CreateBookBody, GetBookByIdParams, ListBooksQuery } from '../dto'
+import { Book, BooksService } from '../providers'
 
 @Controller()
 @UsePartialPatternMatch()

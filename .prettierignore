@@ -4,8 +4,16 @@
 **/node_modules
 .github/**
 .prettierrc
+.yarn/**
 *.json
 dist
 coverage
+assets/**
 *.md
+.editorconfig
+.gitignore
+.npmrc
+.yarnrc.yml
+.prettierignore
+yarn.lock
 LICENSE

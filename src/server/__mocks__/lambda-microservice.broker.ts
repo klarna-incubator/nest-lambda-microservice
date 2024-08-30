@@ -1,6 +1,6 @@
+import { jest } from '@jest/globals'
 import { mocked, MockedObject } from 'jest-mock'
 import { ReplaySubject } from 'rxjs'
-import { jest } from '@jest/globals'
 
 import { LambdaMicroserviceBroker } from '../lambda-microservice.broker'
 

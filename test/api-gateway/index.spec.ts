@@ -1,27 +1,26 @@
-import { jest, describe, afterEach, it, expect } from '@jest/globals'
+import { afterEach, describe, expect, it, jest } from '@jest/globals'
 import {
-  ValidationError,
-  ValidationPipe,
-  Module,
-  PipeTransform,
+  AnyAPIGatewayEvent,
+  ApiGatewayPattern,
+  ClientToken,
+  isApiGatewayEventV1,
+  LambdaMicroserviceBrokerFactory,
+  LambdaMicroserviceClient,
+} from '@klarna/nest-lambda-microservice'
+import {
   ArgumentMetadata,
   Controller,
   Injectable,
+  Module,
+  PipeTransform,
+  ValidationError,
+  ValidationPipe,
 } from '@nestjs/common'
-import { ClientsModule, MessagePattern, Payload, RpcException } from '@nestjs/microservices'
-import {
-  ClientToken,
-  LambdaMicroserviceBrokerFactory,
-  LambdaMicroserviceClient,
-  AnyAPIGatewayEvent,
-  ApiGatewayPattern,
-  isApiGatewayEventV1,
-} from '@klarna/nest-lambda-microservice'
 import { APP_PIPE } from '@nestjs/core'
+import { ClientsModule, MessagePattern, Payload, RpcException } from '@nestjs/microservices'
 
-import { makeLambdaHandler } from '../handler'
 import { lambdaContextFactory } from '../context'
-
+import { makeLambdaHandler } from '../handler'
 import { makeApiGatewayEventV1, makeApiGatewayEventV2 } from './events'
 
 describe('API Gateway > Lambda', () => {
@@ -258,9 +257,9 @@ describe('API Gateway > Lambda', () => {
 
     @Injectable()
     class TransformPipe implements PipeTransform {
-      public transform(value: any, metadata: ArgumentMetadata) {
-        const { metatype, type } = metadata
-        const parsedValue = this.tryParseJson<any>(value)
+      public transform(value: unknown, metadata: ArgumentMetadata) {
+        const { metatype, type: _type } = metadata
+        const parsedValue = this.tryParseJson<unknown>(value)
 
         if (!metatype?.constructor?.name) {
           return parsedValue
@@ -269,11 +268,11 @@ describe('API Gateway > Lambda', () => {
         return parsedValue
       }
 
-      protected tryParseJson<T>(value: string): T | string {
+      protected tryParseJson<T>(value: unknown): T | string {
         try {
-          return JSON.parse(value)
+          return JSON.parse(<string>value)
         } catch (_error: unknown) {
-          return value
+          return value as T
         }
       }
     }
@@ -287,7 +286,7 @@ describe('API Gateway > Lambda', () => {
         },
         { partialMatch: true },
       )
-      public handlerMethod(@Payload('body') requestBody: any) {
+      public handlerMethod(@Payload('body') requestBody: unknown) {
         return {
           statusCode: 200,
           body: 'handlerMethod',

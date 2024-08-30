@@ -1,2 +1,2 @@
-export * from './validation.pipe'
 export * from './transform.pipe'
+export * from './validation.pipe'

@@ -1,10 +1,10 @@
-import { jest, describe, afterEach, it, expect } from '@jest/globals'
+import { afterEach, describe, expect, it, jest } from '@jest/globals'
 import { Controller, Module } from '@nestjs/common'
 import { ClientsModule, MessagePattern, RpcException } from '@nestjs/microservices'
 
 import { ClientToken, LambdaMicroserviceBrokerFactory, LambdaMicroserviceClient } from '../../src'
-import { makeLambdaHandler } from '../handler'
 import { lambdaContextFactory } from '../context'
+import { makeLambdaHandler } from '../handler'
 
 describe('Manual Input > Lambda', () => {
   afterEach(async () => {

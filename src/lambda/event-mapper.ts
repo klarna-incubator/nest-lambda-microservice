@@ -16,8 +16,7 @@ import {
   SqsRequestBuilder,
   SqsResponseBuilder,
 } from '../record-builders'
-
-import { isApiGatewayEvent, isS3Event, isEventBridgeEvent, isSnsEvent, isSqsEvent } from './integrations'
+import { isApiGatewayEvent, isEventBridgeEvent, isS3Event, isSnsEvent, isSqsEvent } from './integrations'
 
 export class EventMapper {
   public mapEventToRequest(event: unknown, context: Context): OutgoingRequest | OutgoingRequest[] {

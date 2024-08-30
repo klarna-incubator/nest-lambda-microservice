@@ -1,5 +1,8 @@
 export class IncomingResponseError extends Error {
-  constructor(public readonly requestId: string, public readonly cause: unknown) {
+  constructor(
+    public readonly requestId: string,
+    public readonly cause: unknown,
+  ) {
     super(`The server failed to process the request`)
 
     this.message = `${this.message}, cause: ${this.trySerializeCause(cause)}`
