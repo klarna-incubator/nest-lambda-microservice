@@ -7,13 +7,17 @@ import typescriptEslint from 'typescript-eslint'
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
   javascriptEslint.configs.recommended,
-  pluginNode.configs['flat/recommended-script'],
   ...typescriptEslint.configs.recommended,
 
   {
     settings: {
       jest: {
         version: 29,
+      },
+      'import/resolver': {
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
       },
     },
     ignores: ['**/node_modules', '**/dist', '**/coverage'],
@@ -75,5 +79,11 @@ export default [
       ],
       '@typescript-eslint/no-explicit-any': ['warn'],
     },
+  },
+
+  /* Node files */
+  {
+    files: ['**/*.mjs'],
+    ...pluginNode.configs['flat/recommended-script'],
   },
 ]
