@@ -1,6 +1,6 @@
 {
   "name": "@klarna/nest-lambda-microservice",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "NestJS based microservice for writing applications that run on AWS Lambda",
   "repository": {
     "type": "git",
