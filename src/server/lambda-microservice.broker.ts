@@ -52,3 +52,5 @@ export class LambdaMicroserviceBroker extends EventEmitter {
 }
 
 export const LambdaMicroserviceBrokerFactory = () => new LambdaMicroserviceBroker()
+
+export const singletonBroker = LambdaMicroserviceBrokerFactory()
