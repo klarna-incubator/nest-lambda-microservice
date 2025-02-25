@@ -1,5 +1,4 @@
-import { ClientProxy, ReadPacket, WritePacket } from '@nestjs/microservices'
-import { PacketId } from '@nestjs/microservices/interfaces/packet.interface'
+import { ClientProxy, PacketId, ReadPacket, WritePacket } from '@nestjs/microservices'
 import { Context } from 'aws-lambda'
 import { catchError, map, merge, of, reduce } from 'rxjs'
 import { v4 } from 'uuid'
@@ -135,5 +134,14 @@ export class LambdaMicroserviceClient extends ClientProxy {
 
       callbackFn({ err, response })
     }
+  }
+
+  unwrap<T>(): T {
+    if (!this.isConnected) {
+      throw new Error('Not initialized. Please call the "connect" method first.')
+    }
+
+    // @ts-expect-error nest client proxy unwrap has a wrong typing
+    return this.broker
   }
 }

@@ -1,11 +1,13 @@
-import { INestMicroservice } from '@nestjs/common'
+import { DynamicModule, ForwardReference, INestMicroservice, Type } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { MicroserviceOptions } from '@nestjs/microservices'
 import { Context } from 'aws-lambda'
 
 import { ClientToken, LambdaMicroserviceBroker, LambdaMicroserviceServer } from '../src'
 
-export const makeLambdaHandler = (moduleCls: unknown, broker: LambdaMicroserviceBroker) => {
+type IEntryNestModule = Type<any> | DynamicModule | ForwardReference | Promise<IEntryNestModule>
+
+export const makeLambdaHandler = (moduleCls: IEntryNestModule, broker: LambdaMicroserviceBroker) => {
   /* The microservice is initialised outside the Lambda handler to be reused in the Lambda execution env */
   let microservice: INestMicroservice
 
