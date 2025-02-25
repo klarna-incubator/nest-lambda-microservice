@@ -5,6 +5,7 @@ import { CustomTransportStrategy, MessageHandler, MsPattern, Server, WritePacket
 import { IdentityDeserializer } from '@nestjs/microservices/deserializers'
 import { InvalidMessageException } from '@nestjs/microservices/errors/invalid-message.exception'
 import { IdentitySerializer } from '@nestjs/microservices/serializers'
+import { publish } from 'rxjs'
 
 import { LambdaContext } from '../ctx-host'
 import { IncomingRequest } from '../interfaces'
@@ -197,5 +198,14 @@ export class LambdaMicroserviceServer extends Server implements CustomTransportS
     }
 
     return false
+  }
+
+  on<EventKey, EventCallback>(event: EventKey, callback: EventCallback): any {
+    throw new Error('Method is not supported for Lambda Microservice client')
+  }
+
+  unwrap<T>(): T {
+    // @ts-expect-error nest client proxy unwrap has a wrong typing
+    return this.broker
   }
 }
