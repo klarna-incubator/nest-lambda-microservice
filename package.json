@@ -1,6 +1,6 @@
 {
   "name": "@klarna/nest-lambda-microservice",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "NestJS based microservice for writing applications that run on AWS Lambda",
   "repository": {
     "type": "git",
@@ -23,34 +23,34 @@
     "prettier:fix": "prettier --write 'src/**/*.ts'"
   },
   "dependencies": {
-    "@nestjs/common": "11.1.6",
-    "@nestjs/core": "11.1.6",
-    "@nestjs/microservices": "11.1.6",
+    "@nestjs/common": "11.1.9",
+    "@nestjs/core": "11.1.9",
+    "@nestjs/microservices": "11.1.9",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
     "uuid": "11.1.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.21.0",
-    "@jest/globals": "29.7.0",
-    "@nestjs/testing": "11.1.6",
-    "@tsconfig/node20": "20.1.4",
-    "@types/aws-lambda": "8.10.147",
-    "@types/node": "22.13.5",
-    "@types/uuid": "10.0.0",
+    "@eslint/js": "^9.39.1",
+    "@jest/globals": "30.2.0",
+    "@nestjs/testing": "11.1.9",
+    "@tsconfig/node20": "20.1.8",
+    "@types/aws-lambda": "8.10.159",
+    "@types/node": "22.19.2",
+    "@types/uuid": "11.0.0",
     "class-transformer": "0.5.1",
-    "class-validator": "0.14.1",
-    "eslint": "9.21.0",
-    "eslint-config-prettier": "10.0.1",
-    "eslint-plugin-jest": "28.11.0",
-    "eslint-plugin-n": "^17.15.1",
-    "eslint-plugin-prettier": "5.2.3",
+    "class-validator": "0.14.3",
+    "eslint": "9.39.1",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-jest": "29.2.1",
+    "eslint-plugin-n": "^17.23.1",
+    "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "jest": "29.7.0",
-    "prettier": "3.5.2",
-    "ts-jest": "29.2.6",
-    "typescript": "5.7.3",
-    "typescript-eslint": "^8.25.0"
+    "jest": "30.2.0",
+    "prettier": "3.7.4",
+    "ts-jest": "29.4.6",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.49.0"
   },
   "volta": {
     "node": "20.17.0"

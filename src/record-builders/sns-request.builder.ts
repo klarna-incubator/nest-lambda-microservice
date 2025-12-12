@@ -23,7 +23,7 @@ export class SnsRequestBuilder implements RequestBuilder {
     }, pattern)
   }
 
-  public static mapSnsMessageAttributes(messageAttribute: SNSMessageAttribute): string | number {
+  public static mapSnsMessageAttributes(messageAttribute: SNSMessageAttribute): string | number | string[] {
     switch (messageAttribute.Type) {
       case 'String':
         try {
