@@ -10,6 +10,10 @@ export default [
   ...typescriptEslint.configs.recommended,
 
   {
+    ignores: ['**/node_modules', '**/dist', '**/coverage'],
+  },
+
+  {
     settings: {
       jest: {
         version: 29,
@@ -20,7 +24,6 @@ export default [
         },
       },
     },
-    ignores: ['**/node_modules', '**/dist', '**/coverage'],
   },
 
   /* Import sorting */
