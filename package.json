@@ -4,7 +4,7 @@
   "description": "NestJS based microservice for writing applications that run on AWS Lambda",
   "repository": {
     "type": "git",
-    "url": "git@github.com:klarna-incubator/nest-lambda-microservice.git"
+    "url": "git+ssh://git@github.com/klarna-incubator/nest-lambda-microservice.git"
   },
   "main": "dist/index.js",
   "files": [
