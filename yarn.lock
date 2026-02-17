@@ -1152,10 +1152,10 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^9.39.1"
     "@jest/globals": "npm:30.2.0"
-    "@nestjs/common": "npm:11.1.12"
-    "@nestjs/core": "npm:11.1.12"
-    "@nestjs/microservices": "npm:11.1.12"
-    "@nestjs/testing": "npm:11.1.12"
+    "@nestjs/common": "npm:11.1.13"
+    "@nestjs/core": "npm:11.1.13"
+    "@nestjs/microservices": "npm:11.1.13"
+    "@nestjs/testing": "npm:11.1.13"
     "@tsconfig/node20": "npm:20.1.8"
     "@types/aws-lambda": "npm:8.10.159"
     "@types/node": "npm:22.19.2"
@@ -1197,9 +1197,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/common@npm:11.1.12":
-  version: 11.1.12
-  resolution: "@nestjs/common@npm:11.1.12"
+"@nestjs/common@npm:11.1.13":
+  version: 11.1.13
+  resolution: "@nestjs/common@npm:11.1.13"
   dependencies:
     file-type: "npm:21.3.0"
     iterare: "npm:1.2.1"
@@ -1216,13 +1216,13 @@ __metadata:
       optional: true
     class-validator:
       optional: true
-  checksum: 10c0/2ab28286ba7a3cdef74c11f9578f859e24d96828de5c271374cba2abc92c64b923bdcb46aa119d617bcac0557159c85ddf70aa30d773363ef4f57456c7cef100
+  checksum: 10c0/1e726347c9adbb0ba124ee0745c297b97819ee5efd3419130746ba49e867484d0f33d9300844859b683de980436efd4b910e9ba80dadfa144a416b9388ac5183
   languageName: node
   linkType: hard
 
-"@nestjs/core@npm:11.1.12":
-  version: 11.1.12
-  resolution: "@nestjs/core@npm:11.1.12"
+"@nestjs/core@npm:11.1.13":
+  version: 11.1.13
+  resolution: "@nestjs/core@npm:11.1.13"
   dependencies:
     "@nuxt/opencollective": "npm:0.4.1"
     fast-safe-stringify: "npm:2.1.1"
@@ -1244,13 +1244,13 @@ __metadata:
       optional: true
     "@nestjs/websockets":
       optional: true
-  checksum: 10c0/a07dd42cfecf88324fa9c029cec118ab54791edd72e00f0a2ccc48b364dc84e348514cabb26d3a18f52640a817a367c4a82b563871d2d2cd7898771cc7fe5ec9
+  checksum: 10c0/1cc791554595eb690d44a44a2f8248c495698d2b2c9dbd0faff521c612549535b68504b51e300dd9e71dce986218aeec181061a892d4a02d944d50d197d4e7bf
   languageName: node
   linkType: hard
 
-"@nestjs/microservices@npm:11.1.12":
-  version: 11.1.12
-  resolution: "@nestjs/microservices@npm:11.1.12"
+"@nestjs/microservices@npm:11.1.13":
+  version: 11.1.13
+  resolution: "@nestjs/microservices@npm:11.1.13"
   dependencies:
     iterare: "npm:1.2.1"
     tslib: "npm:2.8.1"
@@ -1287,13 +1287,13 @@ __metadata:
       optional: true
     nats:
       optional: true
-  checksum: 10c0/afcb64e88590b5b29ecb507ac13742169224ad8268ffbcb1efa10cc7de50349634932158135834b2225327be9f8cdf17c524d1b383cd29f51a51543669c724e4
+  checksum: 10c0/619819c2d31ade236e805054c16f530086f13e70abed1d3f49990b62639244a28c065c9b446257d1b6c4c4db475d60c7fa6b062d2e1f79b2759be805fe9bcc5b
   languageName: node
   linkType: hard
 
-"@nestjs/testing@npm:11.1.12":
-  version: 11.1.12
-  resolution: "@nestjs/testing@npm:11.1.12"
+"@nestjs/testing@npm:11.1.13":
+  version: 11.1.13
+  resolution: "@nestjs/testing@npm:11.1.13"
   dependencies:
     tslib: "npm:2.8.1"
   peerDependencies:
@@ -1306,7 +1306,7 @@ __metadata:
       optional: true
     "@nestjs/platform-express":
       optional: true
-  checksum: 10c0/7f65cc8d0fb7a654ecadf1d8f5a4c0d2112f43cc2a2b59454dcc34b6a25b6280af3ee5a189439e354212d5ba8afd29df67e099bc8387389eb2f93da5c783ad8a
+  checksum: 10c0/25485800881d33260663a7a576e6226c34b4f5068c60a93af92e2895343e640962a4986613f7e85118a77e905a31ef15567a8bfa2f70e0983aade8f4977b2e8a
   languageName: node
   linkType: hard
 
