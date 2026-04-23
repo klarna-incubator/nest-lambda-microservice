@@ -23,7 +23,7 @@
     "prettier:fix": "prettier --write 'src/**/*.ts'"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.19",
+    "@nestjs/common": "11.1.19",
     "@nestjs/core": "11.1.19",
     "@nestjs/microservices": "11.1.19",
     "reflect-metadata": "0.2.2",
