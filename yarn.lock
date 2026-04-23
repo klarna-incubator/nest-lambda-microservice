@@ -1152,7 +1152,7 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^9.39.1"
     "@jest/globals": "npm:30.2.0"
-    "@nestjs/common": "npm:^11.1.19"
+    "@nestjs/common": "npm:11.1.19"
     "@nestjs/core": "npm:11.1.19"
     "@nestjs/microservices": "npm:11.1.19"
     "@nestjs/testing": "npm:11.1.19"
@@ -1197,7 +1197,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/common@npm:^11.1.19":
+"@nestjs/common@npm:11.1.19":
   version: 11.1.19
   resolution: "@nestjs/common@npm:11.1.19"
   dependencies:
