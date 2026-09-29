@@ -2,9 +2,9 @@ import 'reflect-metadata'
 
 import { Logger } from '@nestjs/common'
 import { CustomTransportStrategy, MessageHandler, MsPattern, Server, WritePacket } from '@nestjs/microservices'
-import { IdentityDeserializer } from '@nestjs/microservices/deserializers'
+import { IdentityDeserializer } from '@nestjs/microservices/deserializers/index.js'
 import { InvalidMessageException } from '@nestjs/microservices/errors/invalid-message.exception'
-import { IdentitySerializer } from '@nestjs/microservices/serializers'
+import { IdentitySerializer } from '@nestjs/microservices/serializers/index.js'
 import { publish } from 'rxjs'
 
 import { LambdaContext } from '../ctx-host'
